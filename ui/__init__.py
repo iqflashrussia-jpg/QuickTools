@@ -1,9 +1,9 @@
+"""
+UI модули приложения.
+"""
+
+from . import styles
 from . import components
-from . import progress_ui
-from . import create_project
-from . import publish
-from . import folder_selector
-from . import archiver
-from . import fla_operations
-from . import rename_operations
+from . import widgets
+from . import blocks
 from . import main_view
