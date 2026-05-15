@@ -1,0 +1,22 @@
+# Компиляция и сборка
+build/
+dist/
+*.spec
+__pycache__/
+*.pyc
+
+# Временные файлы
+*.log
+*.tmp
+
+# IDE
+.vscode/
+.idea/
+
+# Системные файлы
+Thumbs.db
+.DS_Store
+
+# Игнорировать все .exe, кроме oxipng.exe
+*.exe
+!oxipng.exe
