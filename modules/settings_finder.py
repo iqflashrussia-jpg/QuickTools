@@ -1,3 +1,4 @@
+import os
 from . import image_optimizer
 from . import archive_handler
 

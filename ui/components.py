@@ -27,3 +27,27 @@ def make_outlined_button(text, on_click, bgcolor=None, color=COLORS["PRIMARY"], 
         expand=expand,
         height=height,
     )
+
+def create_dynamic_field_row(text_field, add_callback, remove_callback):
+    """Создаёт строку с полем ввода и кнопками +/-
+       Возвращает row и ссылки на кнопки"""
+    row = ft.Row([text_field], spacing=5, vertical_alignment=ft.CrossAxisAlignment.CENTER)
+    
+    remove_btn = ft.IconButton(
+        icon=ft.Icons.REMOVE_CIRCLE,
+        icon_color=COLORS["ERROR"],
+        icon_size=20,
+    )
+    add_btn = ft.IconButton(
+        icon=ft.Icons.ADD_CIRCLE,
+        icon_color=COLORS["SUCCESS"],
+        icon_size=20,
+    )
+    
+    remove_btn.on_click = remove_callback
+    add_btn.on_click = add_callback
+    
+    row.controls.append(remove_btn)
+    row.controls.append(add_btn)
+    
+    return row

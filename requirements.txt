@@ -1,2 +1,3 @@
-pip freeze > requirements.txt
-git add requirements.txt
+flet
+Pillow
+imagequant
