@@ -25,10 +25,12 @@ def create_project_block(log_func, selected_path_ref, folder_text, page):
     creative_names_column = ft.Column(spacing=5)
     
     def add_platform_field(value="Master"):
+        """Добавляет новое поле для площадки"""
         text_field = ft.TextField(
             value=value,
             hint_text="Название площадки",
-            expand=True,
+            width=200,  # добавьте эту строку
+            expand=False,  # уберите expand или замените на False
             height=40,
             text_size=13,
             bgcolor=COLORS["BG_INPUT"],
@@ -36,17 +38,26 @@ def create_project_block(log_func, selected_path_ref, folder_text, page):
             color=COLORS["TEXT"],
         )
         
-        row = ft.Row([text_field], spacing=5, vertical_alignment=ft.CrossAxisAlignment.CENTER)
-        
-        remove_btn = ft.IconButton(
-            icon=ft.Icons.REMOVE_CIRCLE,
-            icon_color=COLORS["ERROR"],
-            icon_size=20,
+        row = ft.Row(
+            [text_field],
+            spacing=10,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
         )
-        add_btn = ft.IconButton(
-            icon=ft.Icons.ADD_CIRCLE,
-            icon_color=COLORS["SUCCESS"],
-            icon_size=20,
+        
+        # Исправлено: используем content вместо text
+        remove_btn = ft.ElevatedButton(
+            content=ft.Text("−", size=16, weight=ft.FontWeight.BOLD),
+            bgcolor=COLORS["ERROR"],
+            color=ft.Colors.WHITE,
+            width=40,
+            height=40,
+        )
+        add_btn = ft.ElevatedButton(
+            content=ft.Text("+", size=16, weight=ft.FontWeight.BOLD),
+            bgcolor=COLORS["SUCCESS"],
+            color=ft.Colors.WHITE,
+            width=40,
+            height=40,
         )
         
         def remove_handler(e):
@@ -70,6 +81,7 @@ def create_project_block(log_func, selected_path_ref, folder_text, page):
         page.update()
     
     def add_creative_field(value="creative"):
+        """Добавляет новое поле для названия креатива"""
         text_field = ft.TextField(
             value=value,
             hint_text="Название креатива",
@@ -81,17 +93,25 @@ def create_project_block(log_func, selected_path_ref, folder_text, page):
             color=COLORS["TEXT"],
         )
         
-        row = ft.Row([text_field], spacing=5, vertical_alignment=ft.CrossAxisAlignment.CENTER)
-        
-        remove_btn = ft.IconButton(
-            icon=ft.Icons.REMOVE_CIRCLE,
-            icon_color=COLORS["ERROR"],
-            icon_size=20,
+        row = ft.Row(
+            [text_field],
+            spacing=10,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
         )
-        add_btn = ft.IconButton(
-            icon=ft.Icons.ADD_CIRCLE,
-            icon_color=COLORS["SUCCESS"],
-            icon_size=20,
+        
+        remove_btn = ft.ElevatedButton(
+            content=ft.Text("−", size=16, weight=ft.FontWeight.BOLD),
+            bgcolor=COLORS["ERROR"],
+            color=ft.Colors.WHITE,
+            width=40,
+            height=40,
+        )
+        add_btn = ft.ElevatedButton(
+            content=ft.Text("+", size=16, weight=ft.FontWeight.BOLD),
+            bgcolor=COLORS["SUCCESS"],
+            color=ft.Colors.WHITE,
+            width=40,
+            height=40,
         )
         
         def remove_handler(e):
@@ -119,9 +139,6 @@ def create_project_block(log_func, selected_path_ref, folder_text, page):
     add_creative_field("creative")
     
     def create_structure(e):
-        if selected_path_ref[0] and hasattr(selected_path_ref[0], '__call__'):
-            pass
-        
         project_name = project_name_input.value.strip()
         if not project_name:
             log_func("Введите название проекта!")

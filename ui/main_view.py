@@ -48,7 +48,7 @@ def create_main_view(page: ft.Page, selected_path_ref, is_working_ref, log_func)
             fla_container,
             rename_container,
         ], spacing=12),
-        width=480,
+        width=550,
     )
     
     def clear_output(e):

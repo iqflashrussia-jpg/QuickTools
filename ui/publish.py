@@ -1,12 +1,10 @@
 import flet as ft
 import os
-import tkinter as tk
-from tkinter import filedialog
 from modules.config import COLORS
 from ui.components import make_button
 
 def publish_block(log_func, selected_path_ref, folder_text, page):
-    """Создаёт блок 'Publish'"""
+    """Создаёт блок 'Publish' - создаёт структуру внутри папки publish"""
     
     project_name_input = ft.TextField(
         value="PROD",
@@ -19,92 +17,16 @@ def publish_block(log_func, selected_path_ref, folder_text, page):
         color=COLORS["TEXT"],
     )
     
-    subchannels_inputs = []
-    subchannels_column = ft.Column(spacing=5)
-    platforms_inputs = []
-    platforms_column = ft.Column(spacing=5)
+    # Названия креативов (будут созданы как папки)
     creative_names_inputs = []
     creative_names_column = ft.Column(spacing=5)
     
-    def add_subchannel_field(value="5_Context_Media"):
-        text_field = ft.TextField(
-            value=value,
-            hint_text="Название подканала",
-            expand=True,
-            height=40,
-            text_size=13,
-            bgcolor=COLORS["BG_INPUT"],
-            border_color="#3d3d3d",
-            color=COLORS["TEXT"],
-        )
-        
-        row = ft.Row([text_field], spacing=5, vertical_alignment=ft.CrossAxisAlignment.CENTER)
-        
-        remove_btn = ft.IconButton(icon=ft.Icons.REMOVE_CIRCLE, icon_color=COLORS["ERROR"], icon_size=20)
-        add_btn = ft.IconButton(icon=ft.Icons.ADD_CIRCLE, icon_color=COLORS["SUCCESS"], icon_size=20)
-        
-        def remove_handler(e):
-            if row in subchannels_column.controls:
-                idx = subchannels_column.controls.index(row)
-                subchannels_column.controls.pop(idx)
-                subchannels_inputs.pop(idx)
-                page.update()
-        
-        def add_handler(e):
-            add_subchannel_field()
-        
-        remove_btn.on_click = remove_handler
-        add_btn.on_click = add_handler
-        
-        row.controls.append(remove_btn)
-        row.controls.append(add_btn)
-        
-        subchannels_inputs.append(text_field)
-        subchannels_column.controls.append(row)
-        page.update()
-    
-    def add_platform_field(value="Яндекс - Баннеры"):
-        text_field = ft.TextField(
-            value=value,
-            hint_text="Название площадки",
-            expand=True,
-            height=40,
-            text_size=13,
-            bgcolor=COLORS["BG_INPUT"],
-            border_color="#3d3d3d",
-            color=COLORS["TEXT"],
-        )
-        
-        row = ft.Row([text_field], spacing=5, vertical_alignment=ft.CrossAxisAlignment.CENTER)
-        
-        remove_btn = ft.IconButton(icon=ft.Icons.REMOVE_CIRCLE, icon_color=COLORS["ERROR"], icon_size=20)
-        add_btn = ft.IconButton(icon=ft.Icons.ADD_CIRCLE, icon_color=COLORS["SUCCESS"], icon_size=20)
-        
-        def remove_handler(e):
-            if row in platforms_column.controls:
-                idx = platforms_column.controls.index(row)
-                platforms_column.controls.pop(idx)
-                platforms_inputs.pop(idx)
-                page.update()
-        
-        def add_handler(e):
-            add_platform_field()
-        
-        remove_btn.on_click = remove_handler
-        add_btn.on_click = add_handler
-        
-        row.controls.append(remove_btn)
-        row.controls.append(add_btn)
-        
-        platforms_inputs.append(text_field)
-        platforms_column.controls.append(row)
-        page.update()
-    
     def add_creative_field(value="creative"):
+        """Добавляет новое поле для названия креатива"""
         text_field = ft.TextField(
             value=value,
             hint_text="Название креатива",
-            expand=True,
+            width=200,
             height=40,
             text_size=13,
             bgcolor=COLORS["BG_INPUT"],
@@ -112,10 +34,24 @@ def publish_block(log_func, selected_path_ref, folder_text, page):
             color=COLORS["TEXT"],
         )
         
-        row = ft.Row([text_field], spacing=5, vertical_alignment=ft.CrossAxisAlignment.CENTER)
+        row = ft.Row(
+            [text_field],
+            spacing=10,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+        )
         
-        remove_btn = ft.IconButton(icon=ft.Icons.REMOVE_CIRCLE, icon_color=COLORS["ERROR"], icon_size=20)
-        add_btn = ft.IconButton(icon=ft.Icons.ADD_CIRCLE, icon_color=COLORS["SUCCESS"], icon_size=20)
+        remove_btn = ft.IconButton(
+            icon=ft.Icons.REMOVE_CIRCLE,
+            icon_color=COLORS["ERROR"],
+            icon_size=24,
+            tooltip="Удалить креатив",
+        )
+        add_btn = ft.IconButton(
+            icon=ft.Icons.ADD_CIRCLE,
+            icon_color=COLORS["SUCCESS"],
+            icon_size=24,
+            tooltip="Добавить креатив",
+        )
         
         def remove_handler(e):
             if row in creative_names_column.controls:
@@ -137,65 +73,214 @@ def publish_block(log_func, selected_path_ref, folder_text, page):
         creative_names_column.controls.append(row)
         page.update()
     
+    # Структура: список подканалов, у каждого свой список площадок
+    subchannels_data = []
+    subchannels_column = ft.Column(spacing=15)
+    
+    def add_platform_to_subchannel(subchannel_index, platform_value="Яндекс - Баннеры"):
+        """Добавляет площадку к конкретному подканалу"""
+        subchannel = subchannels_data[subchannel_index]
+        platforms_inputs = subchannel["platforms"]
+        platforms_column = subchannel["platforms_column"]
+        
+        text_field = ft.TextField(
+            value=platform_value,
+            hint_text="Название площадки",
+            width=200,
+            height=40,
+            text_size=13,
+            bgcolor=COLORS["BG_INPUT"],
+            border_color="#3d3d3d",
+            color=COLORS["TEXT"],
+        )
+        
+        row = ft.Row(
+            [text_field],
+            spacing=10,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+        )
+        
+        remove_btn = ft.IconButton(
+            icon=ft.Icons.REMOVE_CIRCLE,
+            icon_color=COLORS["ERROR"],
+            icon_size=24,
+            tooltip="Удалить площадку",
+        )
+        add_btn = ft.IconButton(
+            icon=ft.Icons.ADD_CIRCLE,
+            icon_color=COLORS["SUCCESS"],
+            icon_size=24,
+            tooltip="Добавить площадку",
+        )
+        
+        def remove_handler(e):
+            if row in platforms_column.controls:
+                idx = platforms_column.controls.index(row)
+                platforms_column.controls.pop(idx)
+                platforms_inputs.pop(idx)
+                page.update()
+        
+        def add_handler(e):
+            add_platform_to_subchannel(subchannel_index)
+        
+        remove_btn.on_click = remove_handler
+        add_btn.on_click = add_handler
+        
+        row.controls.append(remove_btn)
+        row.controls.append(add_btn)
+        
+        platforms_inputs.append(text_field)
+        platforms_column.controls.append(row)
+        page.update()
+    
+    def add_subchannel_field(value="5_Context_Media"):
+        """Добавляет новый подканал со своим списком площадок"""
+        subchannel_name = ft.TextField(
+            value=value,
+            hint_text="Название подканала",
+            width=250,
+            height=40,
+            text_size=13,
+            bgcolor=COLORS["BG_INPUT"],
+            border_color="#3d3d3d",
+            color=COLORS["TEXT"],
+        )
+        
+        platforms_inputs = []
+        platforms_column = ft.Column(spacing=5)
+        
+        platforms_header = ft.Text("Площадки:", size=11, color=COLORS["TEXT_SECONDARY"])
+        
+        subchannel_container = ft.Column(spacing=5)
+        subchannel_container.controls.append(subchannel_name)
+        subchannel_container.controls.append(platforms_header)
+        subchannel_container.controls.append(platforms_column)
+        
+        subchannel_row = ft.Row(
+            [subchannel_container],
+            spacing=10,
+            vertical_alignment=ft.CrossAxisAlignment.START,
+        )
+        
+        remove_subchannel_btn = ft.IconButton(
+            icon=ft.Icons.REMOVE_CIRCLE,
+            icon_color=COLORS["ERROR"],
+            icon_size=24,
+            tooltip="Удалить подканал",
+        )
+        add_subchannel_btn = ft.IconButton(
+            icon=ft.Icons.ADD_CIRCLE,
+            icon_color=COLORS["SUCCESS"],
+            icon_size=24,
+            tooltip="Добавить подканал",
+        )
+        
+        def remove_subchannel_handler(e):
+            for i, data in enumerate(subchannels_data):
+                if data["row"] == subchannel_row:
+                    subchannels_data.pop(i)
+                    break
+            if subchannel_row in subchannels_column.controls:
+                idx = subchannels_column.controls.index(subchannel_row)
+                subchannels_column.controls.pop(idx)
+                page.update()
+        
+        def add_subchannel_handler(e):
+            add_subchannel_field()
+        
+        remove_subchannel_btn.on_click = remove_subchannel_handler
+        add_subchannel_btn.on_click = add_subchannel_handler
+        
+        subchannel_row.controls.append(remove_subchannel_btn)
+        subchannel_row.controls.append(add_subchannel_btn)
+        
+        subchannels_data.append({
+            "name_field": subchannel_name,
+            "platforms": platforms_inputs,
+            "platforms_column": platforms_column,
+            "row": subchannel_row,
+            "container": subchannel_container
+        })
+        
+        add_platform_to_subchannel(len(subchannels_data) - 1, "Яндекс - Баннеры")
+        
+        subchannels_column.controls.append(subchannel_row)
+        page.update()
+    
+    # Добавляем первый подканал и первый креатив по умолчанию
     add_subchannel_field("5_Context_Media")
-    add_platform_field("Яндекс - Баннеры")
     add_creative_field("creative")
     
     def create_structure(e):
+        if not selected_path_ref[0]:
+            log_func("Сначала выберите рабочую папку с проектом или создайте проект!")
+            return
+        
         project_name = project_name_input.value.strip()
         if not project_name:
             log_func("Введите название проекта!")
             return
         
-        subchannels = [f.value.strip() for f in subchannels_inputs if f.value.strip()]
-        if not subchannels:
-            log_func("Добавьте хотя бы один подканал!")
-            return
+        # Собираем названия креативов
+        creatives = []
+        for field in creative_names_inputs:
+            val = field.value.strip()
+            if val:
+                creatives.append(val)
         
-        platforms = [f.value.strip() for f in platforms_inputs if f.value.strip()]
-        if not platforms:
-            log_func("Добавьте хотя бы одну площадку!")
-            return
-        
-        creatives = [f.value.strip() for f in creative_names_inputs if f.value.strip()]
         if not creatives:
             log_func("Добавьте хотя бы одно название креатива!")
             return
         
-        root = tk.Tk()
-        root.withdraw()
-        root.attributes('-topmost', True)
-        base_folder = filedialog.askdirectory(title="Выберите папку для создания структуры публикации")
-        root.destroy()
+        subchannels = []
+        for data in subchannels_data:
+            subchannel_name = data["name_field"].value.strip()
+            if not subchannel_name:
+                log_func("Название подканала не может быть пустым!")
+                return
+            
+            platforms = []
+            for field in data["platforms"]:
+                val = field.value.strip()
+                if val:
+                    platforms.append(val)
+            
+            if not platforms:
+                log_func(f"Для подканала '{subchannel_name}' добавьте хотя бы одну площадку!")
+                return
+            
+            subchannels.append({
+                "name": subchannel_name,
+                "platforms": platforms
+            })
         
-        if not base_folder:
-            log_func("Выбор папки отменён")
+        if not subchannels:
+            log_func("Добавьте хотя бы один подканал!")
             return
         
-        project_path = os.path.join(base_folder, project_name)
+        # Путь к папке publish
+        project_path = selected_path_ref[0]
+        publish_path = os.path.join(project_path, "publish", project_name)
         
         try:
-            os.makedirs(project_path, exist_ok=True)
+            os.makedirs(publish_path, exist_ok=True)
             
+            # Создаём структуру: подканал → площадка → креатив
             for subchannel in subchannels:
-                subchannel_path = os.path.join(project_path, subchannel)
-                for platform in platforms:
+                subchannel_path = os.path.join(publish_path, subchannel["name"])
+                for platform in subchannel["platforms"]:
                     platform_path = os.path.join(subchannel_path, platform)
                     for creative in creatives:
                         creative_path = os.path.join(platform_path, creative)
                         os.makedirs(creative_path, exist_ok=True)
             
             log_func(f"\n✅ Структура публикации успешно создана!")
-            log_func(f"📍 Путь: {project_path}")
-            log_func(f"📁 Подканалы ({len(subchannels)}): {', '.join(subchannels)}")
-            log_func(f"📁 Площадки ({len(platforms)}): {', '.join(platforms)}")
+            log_func(f"📍 Путь: {publish_path}")
+            log_func(f"📁 Проект: {project_name}")
+            log_func(f"📁 Подканалы ({len(subchannels)}):")
+            for sub in subchannels:
+                log_func(f"     - {sub['name']} → площадки: {', '.join(sub['platforms'])}")
             log_func(f"📁 Креативы ({len(creatives)}): {', '.join(creatives)}")
-            
-            selected_path_ref[0] = project_path
-            folder_text.value = os.path.basename(selected_path_ref[0])
-            folder_text.color = COLORS["PRIMARY"]
-            folder_text.tooltip = selected_path_ref[0]
-            log_func(f"📂 Папка проекта выбрана как рабочая")
             
         except Exception as e:
             log_func(f"❌ Ошибка создания структуры: {str(e)}")
@@ -207,10 +292,8 @@ def publish_block(log_func, selected_path_ref, folder_text, page):
                 ft.Text("Название проекта:", size=12, color=COLORS["TEXT_SECONDARY"]),
                 project_name_input,
             ], spacing=8, alignment=ft.MainAxisAlignment.START),
-            ft.Text("Подканал:", size=12, color=COLORS["TEXT_SECONDARY"]),
+            ft.Text("Подканалы и площадки:", size=12, color=COLORS["TEXT_SECONDARY"]),
             subchannels_column,
-            ft.Text("Площадка:", size=12, color=COLORS["TEXT_SECONDARY"]),
-            platforms_column,
             ft.Text("Названия креативов:", size=12, color=COLORS["TEXT_SECONDARY"]),
             creative_names_column,
             make_button("СОЗДАТЬ", create_structure, COLORS["SUCCESS"], True, 40),

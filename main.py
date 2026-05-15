@@ -15,10 +15,10 @@ def main(page: ft.Page):
     page.padding = 25
     page.bgcolor = "#1e1e1e"
     
-    page.window.width = 1150
-    page.window.height = 800
-    page.window.min_width = 1100
-    page.window.min_height = 750
+    page.window.width = 1600
+    page.window.height = 1200
+    page.window.min_width = 1200
+    page.window.min_height = 800
     page.window.resizable = True
     page.update()
     
