@@ -19,6 +19,7 @@ from ui.blocks import (
     archiver_block,
     fla_operations_block,
     rename_operations_block,
+    optimizer_block,
 )
 
 
@@ -32,8 +33,10 @@ class MainView:
         self.selected_path_ref = selected_path_ref
         self.is_working_ref = is_working_ref
         self.log_func = log_func
-        self.tabs = None
-        self.tab_contents = {}
+        self.tabs_container = None
+        self.tab_content = None
+        self.main_area = None
+        self.start_page = None
         
         # Настройка страницы
         self._setup_page()
@@ -54,21 +57,6 @@ class MainView:
         self.page.window.resizable = True
         self.page.update()
     
-    def _pick_folder(self, e):
-        """Открывает диалог выбора папки"""
-        root = tk.Tk()
-        root.withdraw()
-        root.attributes('-topmost', True)
-        folder_selected = filedialog.askdirectory(title="Выберите рабочую папку")
-        root.destroy()
-        
-        if folder_selected:
-            self.selected_path_ref[0] = folder_selected
-            self._update_folder_display()
-            self.log_func(f"Выбрана папка: {self.selected_path_ref[0]}")
-        else:
-            self.log_func("Выбор папки отменён")
-    
     def _update_folder_display(self):
         """Обновляет отображение выбранной папки"""
         if self.selected_path_ref[0]:
@@ -79,21 +67,102 @@ class MainView:
             self.folder_text.color = AppColors.TEXT_SECONDARY
         self.page.update()
     
-    def _get_folder_update_callback(self):
-        """Возвращает callback для обновления отображения папки"""
-        return self._update_folder_display
+    def _on_project_loaded(self, show_create_tab=False):
+        """Вызывается после загрузки или создания проекта"""
+        # Показываем вкладки
+        self._show_tabs()
+        # Обновляем отображение папки
+        self._update_folder_display()
+        # Если нужно показать вкладку "Создание проекта" (при создании нового)
+        if show_create_tab:
+            self._select_tab(0, self._create_tab_create_project)
+        else:
+            # Иначе переключаемся на вкладку Оптимизация
+            self._select_tab(2, self._create_tab_optimizer)
+    
+    def _show_tabs(self):
+        """Показывает вкладки и скрывает стартовую страницу"""
+        if self.tabs_container:
+            self.main_area.controls = [self.tabs_container]
+            self.page.update()
+    
+    def _select_tab(self, index, create_func):
+        """Переключает вкладку"""
+        if self.tab_content:
+            self.tab_content.controls.clear()
+            content = create_func()
+            self.tab_content.controls.append(content)
+            self.page.update()
+    
+    def _create_tab_create_project(self):
+        """Создаёт содержимое вкладки 'Создание проекта'"""
+        return create_project_block(
+            self.log_func,
+            self.selected_path_ref,
+            self.is_working_ref,
+            self.page,
+            self.progress_widget,
+            self._update_folder_display
+        )
+    
+    def _create_tab_publish(self):
+        """Создаёт содержимое вкладки 'Публикация'"""
+        return publish_block(
+            self.log_func,
+            self.selected_path_ref,
+            self.page,
+            self.progress_widget
+        )
+    
+    def _create_tab_optimizer(self):
+        """Создаёт содержимое вкладки 'Оптимизация'"""
+        return optimizer_block(
+            self.log_func,
+            self.selected_path_ref,
+            self.is_working_ref,
+            self.page,
+            self.progress_widget
+        )
+    
+    def _create_tab_archiver(self):
+        """Создаёт содержимое вкладки 'Архивация'"""
+        return archiver_block(
+            self.log_func,
+            self.selected_path_ref,
+            self.is_working_ref,
+            self.page,
+            self.progress_widget
+        )
+    
+    def _create_tab_fla(self):
+        """Создаёт содержимое вкладки 'FLA операции'"""
+        return fla_operations_block(
+            self.log_func,
+            self.selected_path_ref,
+            self.is_working_ref,
+            self.page,
+            self.progress_widget
+        )
+    
+    def _create_tab_rename(self):
+        """Создаёт содержимое вкладки 'Переименование'"""
+        return rename_operations_block(
+            self.log_func,
+            self.selected_path_ref,
+            self.is_working_ref,
+            self.page,
+            self.progress_widget
+        )
     
     def _get_tabs(self):
-        """Создаёт и возвращает компонент вкладок (совместимый со старой версией Flet)"""
-        # Используем Row с кнопками вместо Tabs для совместимости
+        """Создаёт компонент вкладок"""
         tab_buttons = ft.Row(spacing=0)
         self.tab_content = ft.Column(expand=True)
         
-        # Список вкладок
         tabs_list = [
             ("Создание проекта", self._create_tab_create_project),
             ("Публикация", self._create_tab_publish),
-            ("Оптимизация", self._create_tab_archiver),
+            ("Оптимизация", self._create_tab_optimizer),
             ("Архивация", self._create_tab_archiver),
             ("FLA операции", self._create_tab_fla),
             ("Переименование", self._create_tab_rename),
@@ -119,7 +188,9 @@ class MainView:
             btn = make_tab_button(name, i, create_func)
             tab_buttons.controls.append(btn)
         
-        # Контейнер для вкладок
+        # Активируем первую вкладку по умолчанию
+        self._select_tab(0, tabs_list[0][1])
+        
         tabs_container = ft.Container(
             content=ft.Column([
                 tab_buttons,
@@ -131,63 +202,10 @@ class MainView:
         
         return tabs_container
     
-    def _select_tab(self, index, create_func):
-        """Переключает вкладку"""
-        # Очищаем содержимое
-        self.tab_content.controls.clear()
-        # Создаём новое содержимое
-        content = create_func()
-        self.tab_content.controls.append(content)
-        self.page.update()
-    
-    def _create_tab_create_project(self):
-        """Создаёт содержимое вкладки 'Создание проекта'"""
-        return create_project_block(
-            self.log_func,
-            self.selected_path_ref,
-            self.is_working_ref,
-            self.page,
-            self.progress_widget,
-            self._get_folder_update_callback()
-        )
-    
-    def _create_tab_publish(self):
-        """Создаёт содержимое вкладки 'Публикация'"""
-        return publish_block(
-            self.log_func,
-            self.selected_path_ref,
-            self.page,
-            self.progress_widget
-        )
-    
-    def _create_tab_archiver(self):
-        """Создаёт содержимое вкладки 'Оптимизация/Архивация'"""
-        return archiver_block()
-    
-    def _create_tab_fla(self):
-        """Создаёт содержимое вкладки 'FLA операции'"""
-        return fla_operations_block(
-            self.log_func,
-            self.selected_path_ref,
-            self.is_working_ref,
-            self.page,
-            self.progress_widget
-        )
-    
-    def _create_tab_rename(self):
-        """Создаёт содержимое вкладки 'Переименование'"""
-        return rename_operations_block(
-            self.log_func,
-            self.selected_path_ref,
-            self.is_working_ref,
-            self.page,
-            self.progress_widget
-        )
-    
     def _build_ui(self):
         """Собирает основной интерфейс"""
         
-        # === ВЕРХНЯЯ ПАНЕЛЬ (выбор папки) ===
+        # === ВЕРХНЯЯ ПАНЕЛЬ (текущий проект) ===
         self.folder_text = ft.Text(
             value="Папка не выбрана",
             size=AppSizes.FONT_SIZE_MEDIUM,
@@ -197,7 +215,7 @@ class MainView:
         top_panel = ft.Container(
             content=ft.Row(
                 [
-                    ft.Text("Рабочая папка:", size=AppSizes.FONT_SIZE_MEDIUM, color=AppColors.TEXT_SECONDARY),
+                    ft.Text("Текущий проект:", size=AppSizes.FONT_SIZE_MEDIUM, color=AppColors.TEXT_SECONDARY),
                     ft.Container(
                         content=self.folder_text,
                         expand=True,
@@ -207,7 +225,6 @@ class MainView:
                         border_radius=AppSizes.BORDER_RADIUS_SMALL,
                         border=ft.border.all(1, AppColors.BORDER),
                     ),
-                    make_button("Выбрать", self._pick_folder, AppColors.PRIMARY, expand=False, height=35),
                 ],
                 spacing=AppSizes.PADDING_MEDIUM,
                 vertical_alignment=ft.CrossAxisAlignment.CENTER,
@@ -232,22 +249,36 @@ class MainView:
         # Сохраняем оригинальную log_func для перенаправления
         self._original_log_func = self.log_func
         
-        # Переопределяем log_func для записи в виджет лога
         def new_log_func(message):
             self._original_log_func(message)
             self.log_view.add_message(message, self.page)
         
         self.log_func = new_log_func
         
-        # === ВКЛАДКИ ===
-        tabs_widget = self._get_tabs()
+        # === ОСНОВНАЯ ОБЛАСТЬ (будет меняться) ===
+        self.main_area = ft.Column(expand=True)
         
-        # === СБОРКА ===
+        # === СОЗДАЁМ СТАРТОВУЮ СТРАНИЦУ ===
+        from ui.start_page import create_start_page
+        self.start_page = create_start_page(
+            self.page,
+            self.selected_path_ref,
+            self.log_func,
+            self._on_project_loaded
+        )
+        
+        # Показываем стартовую страницу
+        self.main_area.controls = [self.start_page]
+        
+        # === СОЗДАЁМ ВКЛАДКИ (но пока не показываем) ===
+        self.tabs_container = self._get_tabs()
+        
+        # Собираем всё
         main_container = ft.Column(
             [
                 top_panel,
                 ft.Container(height=AppSizes.PADDING_MEDIUM),
-                tabs_widget,
+                self.main_area,
                 ft.Container(height=AppSizes.PADDING_MEDIUM),
                 self.progress_widget,
                 self.log_view,
@@ -257,9 +288,6 @@ class MainView:
         )
         
         self.page.add(main_container)
-        
-        # Активируем первую вкладку
-        self._select_tab(0, self._create_tab_create_project)
         
         # Обновляем отображение папки
         self._update_folder_display()
