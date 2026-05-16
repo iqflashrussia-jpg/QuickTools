@@ -3,12 +3,10 @@
 """
 
 import flet as ft
-import tkinter as tk
-from tkinter import filedialog
 import os
-
 from ui.styles import AppColors, AppSizes
 from ui.components import make_button
+from ui.widgets.drag_drop_zone import DragDropZone
 
 
 def create_start_page(page, selected_path_ref, log_func, on_project_loaded):
@@ -32,21 +30,17 @@ def create_start_page(page, selected_path_ref, log_func, on_project_loaded):
         """Создаёт новый проект - открывает вкладку Создание проекта"""
         on_project_loaded(show_create_tab=True)
     
-    def on_open_project(e):
-        """Открывает существующий проект"""
-        root = tk.Tk()
-        root.withdraw()
-        root.attributes('-topmost', True)
-        folder_selected = filedialog.askdirectory(title="Выберите папку проекта")
-        root.destroy()
-        
-        if folder_selected:
-            selected_path_ref[0] = folder_selected
-            log_func(f"📂 Открыт проект: {folder_selected}")
-            on_project_loaded(show_create_tab=False)
-        else:
-            status_text.value = "Выбор папки отменён"
-            page.update()
+    def on_drag_drop_project(project_path):
+        """Обработчик выбора проекта через Drag&Drop или кнопку"""
+        selected_path_ref[0] = project_path
+        log_func(f"📂 Открыт проект: {project_path}")
+        on_project_loaded(show_create_tab=False)
+    
+    # Создаем Drag & Drop зону
+    drag_drop_zone = DragDropZone(
+        on_project_selected=on_drag_drop_project,
+        page=page
+    )
     
     # Собираем карточку
     card = ft.Container(
@@ -55,10 +49,12 @@ def create_start_page(page, selected_path_ref, log_func, on_project_loaded):
             ft.Text("Инструменты для работы с проектами", size=AppSizes.FONT_SIZE_MEDIUM, color=AppColors.TEXT_SECONDARY),
             ft.Container(height=AppSizes.PADDING_LARGE),
             
+            # Drag & Drop зона
+            drag_drop_zone,
+            
             ft.Row([
                 make_button("Создать проект", on_create_project, AppColors.SUCCESS, expand=True),
-                make_button("Открыть проект", on_open_project, AppColors.PRIMARY, expand=True),
-            ], spacing=AppSizes.PADDING_MEDIUM),
+            ], alignment=ft.MainAxisAlignment.CENTER),
             
             ft.Container(height=AppSizes.PADDING_SMALL),
             status_text,
@@ -69,7 +65,6 @@ def create_start_page(page, selected_path_ref, log_func, on_project_loaded):
         width=500,
     )
     
-    # Простой контейнер без центрирования
     container = ft.Container(
         content=card,
         expand=True,

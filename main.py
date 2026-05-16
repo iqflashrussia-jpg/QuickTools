@@ -12,6 +12,9 @@ from ui.main_view import create_main_view
 
 
 def main(page: ft.Page):
+    # НАСТРОЙКИ ДЛЯ DRAG & DROP
+    page.drag_to_scroll = True  # Включаем поддержку Drag & Drop
+    
     # Состояние (используем list для изменяемости внутри вложенных функций)
     selected_path = [None]
     is_working = [False]
@@ -35,7 +38,7 @@ def main(page: ft.Page):
     
     # Стартовые сообщения
     log("🚀 QuickTools запущена!")
-    log("💡 Выберите рабочую папку или создайте проект")
+    log("💡 Перетащите папку проекта в окно или создайте новый проект")
 
 
 if __name__ == "__main__":
