@@ -12,6 +12,7 @@ __pycache__/
 # IDE
 .vscode/
 .idea/
+*.code-workspace
 
 # Системные файлы
 Thumbs.db
@@ -20,3 +21,17 @@ Thumbs.db
 # Игнорировать все .exe, кроме oxipng.exe
 *.exe
 !oxipng.exe
+
+# Бэкапы и старые версии
+backup_flet/
+*.bak
+*.backup
+
+# Файлы проекта (документация)
+project_structure.txt
+*.md
+!README.md
+
+# Инсталляторы
+*.iss
+QuickTools_Setup.exe
