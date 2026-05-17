@@ -1,15 +1,15 @@
 """
-Блок оптимизации для PySide6 (точная копия логики из Flet)
+Блок "Оптимизация" - подбор качества сжатия изображений под целевой размер архива.
 """
 
+import os
+import sys
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel,
     QPushButton, QLineEdit, QGroupBox, QProgressBar,
     QFrame
 )
 from PySide6.QtCore import Qt, QThread, Signal, QTimer
-import os
-import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from modules import settings_finder, image_optimizer
@@ -32,7 +32,7 @@ class OptimizerThread(QThread):
             self.log_callback(message)
     
     def find_size_folders(self, base_path):
-        """Находит все папки с 'x' в имени (размеры) внутри папки animate"""
+        """Рекурсивно находит все папки с 'x' в имени внутри папки animate"""
         folders = []
         if not os.path.exists(base_path):
             return folders
@@ -42,25 +42,34 @@ class OptimizerThread(QThread):
             self.log(f"⚠️ Папка animate не найдена: {animate_path}")
             return folders
         
-        for platform in os.listdir(animate_path):
-            platform_path = os.path.join(animate_path, platform)
-            if not os.path.isdir(platform_path):
-                continue
-            
-            for campaign in os.listdir(platform_path):
-                campaign_path = os.path.join(platform_path, campaign)
-                if not os.path.isdir(campaign_path):
-                    continue
-                
-                for size_folder in os.listdir(campaign_path):
-                    size_path = os.path.join(campaign_path, size_folder)
-                    if os.path.isdir(size_path) and 'x' in size_folder.lower():
-                        folders.append({
-                            'path': size_path,
-                            'platform': platform,
-                            'campaign': campaign,
-                            'size': size_folder
-                        })
+        self.log(f"🔍 Рекурсивное сканирование: {animate_path}")
+        
+        # Рекурсивный обход всех папок
+        for root, dirs, files in os.walk(animate_path):
+            for dir_name in dirs:
+                if 'x' in dir_name.lower():
+                    folder_path = os.path.join(root, dir_name)
+                    
+                    # Определяем путь относительно animate
+                    rel_path = os.path.relpath(root, animate_path)
+                    parts = rel_path.split(os.sep) if rel_path != '.' else []
+                    
+                    # Платформа - первый уровень
+                    platform = parts[0] if len(parts) > 0 else "unknown"
+                    # Кампания - второй уровень  
+                    campaign = parts[1] if len(parts) > 1 else "unknown"
+                    # Размер - имя папки
+                    size_name = dir_name
+                    
+                    folders.append({
+                        'path': folder_path,
+                        'platform': platform,
+                        'campaign': campaign,
+                        'size': size_name
+                    })
+                    self.log(f"   ✅ Найдена папка: {platform}/{campaign}/{size_name}")
+        
+        self.log(f"📁 Всего найдено папок с 'x': {len(folders)}")
         return folders
     
     def run(self):
@@ -259,6 +268,10 @@ class OptimizerBlock(QWidget):
             self.log("Операция уже выполняется, подождите...")
             return
         
+        if not self.project_path or not os.path.exists(self.project_path):
+            self.log("❌ Сначала выберите рабочую папку!")
+            return
+        
         try:
             target_kb = int(self.target_size.text().strip())
             if target_kb < 50:
@@ -295,13 +308,16 @@ class OptimizerBlock(QWidget):
             reduction = result.get('total_reduction', 0)
             self.status_text.setText(f"Оптимизация завершена: {result['processed']} папок, сжатие {reduction:.0f}%")
         
-        from PySide6.QtCore import QTimer
         QTimer.singleShot(2000, lambda: self.progress_bar.setVisible(False))
         QTimer.singleShot(2000, lambda: self.progress_label.setVisible(False))
     
     def log(self, message):
         if self.log_callback:
             self.log_callback(message)
+    
+    def update_project_path(self, new_path):
+        self.project_path = new_path
+        self.log(f"📂 Путь проекта обновлён: {new_path}")
     
     def apply_styles(self):
         self.setStyleSheet("""
@@ -353,6 +369,7 @@ class OptimizerBlock(QWidget):
             }
             
             QProgressBar {
+                background-color: #2A2A2A;
                 border: 1px solid #3A3A3A;
                 border-radius: 4px;
                 text-align: center;
