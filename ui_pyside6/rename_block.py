@@ -1,5 +1,5 @@
 """
-Блок "Пакетное переименование" - замена текста в именах файлов и папок (полная копия логики из Flet)
+Блок "Пакетное переименование" - замена текста в именах файлов и папок
 """
 
 import os
@@ -8,6 +8,8 @@ from PySide6.QtWidgets import (
     QPushButton, QLineEdit, QCheckBox, QFrame
 )
 from PySide6.QtCore import Qt, QThread, Signal, QTimer
+
+from ui_pyside6.styles import apply_styles
 
 
 class RenameThread(QThread):
@@ -39,38 +41,34 @@ class RenameThread(QThread):
             # Проверяем папки
             if self.rename_folders:
                 for dir_name in dirs:
-                    old_path = os.path.join(root, dir_name)
-                    # Проверяем наличие искомого текста
                     if self.case_sensitive:
                         if self.find_text in dir_name:
                             items.append({
-                                'path': old_path,
+                                'path': os.path.join(root, dir_name),
                                 'name': dir_name,
                                 'is_folder': True
                             })
                     else:
                         if self.find_text.lower() in dir_name.lower():
                             items.append({
-                                'path': old_path,
+                                'path': os.path.join(root, dir_name),
                                 'name': dir_name,
                                 'is_folder': True
                             })
             
             # Проверяем файлы
             for file_name in files:
-                old_path = os.path.join(root, file_name)
-                # Проверяем наличие искомого текста
                 if self.case_sensitive:
                     if self.find_text in file_name:
                         items.append({
-                            'path': old_path,
+                            'path': os.path.join(root, file_name),
                             'name': file_name,
                             'is_folder': False
                         })
                 else:
                     if self.find_text.lower() in file_name.lower():
                         items.append({
-                            'path': old_path,
+                            'path': os.path.join(root, file_name),
                             'name': file_name,
                             'is_folder': False
                         })
@@ -87,9 +85,7 @@ class RenameThread(QThread):
             self.log(f"📂 Переименовывать папки: {'Да' if self.rename_folders else 'Нет'}")
             self.log(f"{'='*50}")
             
-            # Рекурсивно находим все элементы для переименования
             items_to_rename = self.find_items_to_rename(self.folder_path)
-            
             total = len(items_to_rename)
             
             if total == 0:
@@ -99,7 +95,7 @@ class RenameThread(QThread):
             
             self.log(f"📁 Найдено элементов для переименования: {total}")
             
-            # Сортируем по глубине (сначала обрабатываем глубокие, чтобы не ломать пути)
+            # Сортируем по глубине (сначала обрабатываем глубокие)
             items_to_rename.sort(key=lambda x: x['path'].count(os.sep), reverse=True)
             
             renamed_count = 0
@@ -109,7 +105,6 @@ class RenameThread(QThread):
                 old_path = item['path']
                 name = item['name']
                 
-                # Выполняем замену
                 if self.case_sensitive:
                     new_name = name.replace(self.find_text, self.replace_text)
                 else:
@@ -120,7 +115,6 @@ class RenameThread(QThread):
                     if idx_pos != -1:
                         new_name = name[:idx_pos] + self.replace_text + name[idx_pos + len(self.find_text):]
                 
-                # Если имя не изменилось, пропускаем
                 if new_name == name:
                     continue
                 
@@ -130,7 +124,6 @@ class RenameThread(QThread):
                 progress = int((idx / total) * 100)
                 self.progress_signal.emit(progress, f"Переименование: {name}")
                 
-                # Проверяем, не существует ли уже файл/папка с таким именем
                 if os.path.exists(new_path):
                     self.log(f"  ⚠️ Пропущен: {new_name} уже существует")
                     errors += 1
@@ -173,19 +166,17 @@ class RenameBlock(QWidget):
         self.rename_thread = None
         
         self.setup_ui()
-        self.apply_styles()
+        apply_styles(self)
     
     def setup_ui(self):
         layout = QVBoxLayout(self)
         layout.setSpacing(15)
         layout.setContentsMargins(20, 20, 20, 20)
         
-        # Заголовок
         title = QLabel("Пакетное переименование")
         title.setObjectName("block_title")
         layout.addWidget(title)
         
-        # Поле "Искать"
         find_layout = QHBoxLayout()
         find_layout.setSpacing(10)
         find_layout.addWidget(QLabel("Искать:"))
@@ -196,7 +187,6 @@ class RenameBlock(QWidget):
         
         layout.addLayout(find_layout)
         
-        # Поле "Заменить"
         replace_layout = QHBoxLayout()
         replace_layout.setSpacing(10)
         replace_layout.addWidget(QLabel("Заменить:"))
@@ -207,7 +197,6 @@ class RenameBlock(QWidget):
         
         layout.addLayout(replace_layout)
         
-        # Чекбоксы
         checkboxes_layout = QHBoxLayout()
         checkboxes_layout.setSpacing(20)
         
@@ -223,13 +212,11 @@ class RenameBlock(QWidget):
         
         layout.addLayout(checkboxes_layout)
         
-        # Кнопка выполнения
         self.rename_btn = QPushButton("ЗАМЕНИТЬ ВСЁ")
         self.rename_btn.setObjectName("rename_btn")
         self.rename_btn.clicked.connect(self.start_rename)
         layout.addWidget(self.rename_btn)
         
-        # Прогресс-бар
         self.progress_bar = QPushButton()
         self.progress_bar.setVisible(False)
         self.progress_bar.setObjectName("progress_bar")
@@ -240,12 +227,10 @@ class RenameBlock(QWidget):
         self.progress_label.setObjectName("progress_label")
         layout.addWidget(self.progress_label)
         
-        # Статус
         self.status_text = QLabel("Готов к переименованию")
         self.status_text.setObjectName("status_text")
         layout.addWidget(self.status_text)
         
-        # Подсказка
         hint_frame = QFrame()
         hint_frame.setObjectName("hint_frame")
         hint_layout = QVBoxLayout(hint_frame)
@@ -292,16 +277,13 @@ class RenameBlock(QWidget):
         case_sensitive = self.case_sensitive_checkbox.isChecked()
         rename_folders = self.rename_folders_checkbox.isChecked()
         
-        # Блокируем кнопку
         self.rename_btn.setEnabled(False)
         self.rename_btn.setText("⏳ ЗАМЕНА...")
         
-        # Показываем прогресс
         self.progress_bar.setVisible(True)
         self.progress_label.setVisible(True)
         self.progress_label.setText("Подготовка...")
         
-        # Запускаем поток
         self.rename_thread = RenameThread(
             self.project_path,
             find_text,
@@ -335,91 +317,3 @@ class RenameBlock(QWidget):
     def update_project_path(self, new_path):
         self.project_path = new_path
         self.log(f"📂 Путь проекта обновлён: {new_path}")
-    
-    def apply_styles(self):
-        self.setStyleSheet("""
-            QLabel#block_title {
-                font-size: 18px;
-                font-weight: bold;
-                color: #4CAF50;
-            }
-            
-            QLineEdit {
-                background-color: #2A2A2A;
-                color: #FFFFFF;
-                border: 1px solid #3A3A3A;
-                border-radius: 6px;
-                padding: 8px 12px;
-                font-size: 14px;
-            }
-            
-            QLineEdit:focus {
-                border: 1px solid #4CAF50;
-            }
-            
-            QCheckBox#checkbox {
-                color: #FFFFFF;
-                font-size: 12px;
-            }
-            
-            QCheckBox::indicator {
-                width: 16px;
-                height: 16px;
-            }
-            
-            QPushButton#rename_btn {
-                background-color: #4CAF50;
-                color: white;
-                border: none;
-                border-radius: 6px;
-                padding: 12px;
-                font-size: 14px;
-                font-weight: bold;
-            }
-            
-            QPushButton#rename_btn:hover {
-                background-color: #45a049;
-            }
-            
-            QPushButton#rename_btn:disabled {
-                background-color: #666;
-            }
-            
-            QPushButton#progress_bar {
-                background-color: #2A2A2A;
-                border: 1px solid #3A3A3A;
-                border-radius: 4px;
-                text-align: center;
-                color: white;
-                min-height: 20px;
-            }
-            
-            QLabel#status_text {
-                color: #888888;
-                font-size: 12px;
-                margin-top: 10px;
-            }
-            
-            QFrame#hint_frame {
-                background-color: #1A1A1A;
-                border-radius: 8px;
-                padding: 10px;
-                margin-top: 10px;
-            }
-            
-            QLabel#hint_title {
-                color: #FFA500;
-                font-weight: bold;
-                margin-bottom: 5px;
-            }
-            
-            QLabel#hint_text {
-                color: #666666;
-                font-size: 11px;
-            }
-            
-            QLabel#progress_label {
-                color: #4CAF50;
-                font-size: 11px;
-            }
-        """)

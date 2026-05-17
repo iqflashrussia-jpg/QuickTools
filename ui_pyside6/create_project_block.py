@@ -1,16 +1,16 @@
 """
-Блок "Создание проекта" - полная копия логики из Flet
+Блок "Создание проекта" - создание структуры проекта с динамическими списками
 """
 
 import os
-import sys
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel,
     QPushButton, QLineEdit, QScrollArea, QFrame,
     QFileDialog, QMessageBox
 )
-from PySide6.QtCore import Qt, Signal
-from PySide6.QtGui import QFont
+from PySide6.QtCore import Qt
+
+from ui_pyside6.styles import apply_styles
 
 
 class PlatformRow(QWidget):
@@ -52,9 +52,6 @@ class PlatformRow(QWidget):
     
     def get_value(self):
         return self.text_field.text().strip()
-    
-    def set_value(self, value):
-        self.text_field.setText(value)
 
 
 class CreativeRow(QWidget):
@@ -96,16 +93,10 @@ class CreativeRow(QWidget):
     
     def get_value(self):
         return self.text_field.text().strip()
-    
-    def set_value(self, value):
-        self.text_field.setText(value)
 
 
 class CreateProjectBlock(QWidget):
     """Вкладка создания структуры проекта"""
-    
-    # Сигнал для обновления текущего проекта
-    project_created = Signal(str)
     
     def __init__(self, project_path, log_callback=None, update_project_callback=None):
         super().__init__()
@@ -117,19 +108,16 @@ class CreateProjectBlock(QWidget):
         self.creative_rows = []
         
         self.setup_ui()
-        self.apply_styles()
+        apply_styles(self)
         
-        # Добавляем начальные поля
         self.add_platform_row("Master")
         self.add_creative_row("creative")
     
     def setup_ui(self):
-        """Создаём интерфейс"""
         main_layout = QVBoxLayout(self)
         main_layout.setSpacing(20)
         main_layout.setContentsMargins(20, 20, 20, 20)
         
-        # Создаём скролл-зону
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QFrame.NoFrame)
@@ -197,29 +185,24 @@ class CreateProjectBlock(QWidget):
         main_layout.addWidget(scroll)
     
     def add_platform_row(self, value="Master"):
-        """Добавляет новую строку для площадки"""
         row = PlatformRow(value, self.add_platform_row, self.remove_platform_row)
         self.platforms_container.addWidget(row)
         self.platform_rows.append(row)
     
     def remove_platform_row(self, row):
-        """Удаляет строку площадки"""
         row.deleteLater()
         self.platform_rows.remove(row)
     
     def add_creative_row(self, value="creative"):
-        """Добавляет новую строку для креатива"""
         row = CreativeRow(value, self.add_creative_row, self.remove_creative_row)
         self.creatives_container.addWidget(row)
         self.creative_rows.append(row)
     
     def remove_creative_row(self, row):
-        """Удаляет строку креатива"""
         row.deleteLater()
         self.creative_rows.remove(row)
     
     def get_platforms(self):
-        """Получает список всех площадок"""
         platforms = []
         for row in self.platform_rows:
             val = row.get_value()
@@ -228,7 +211,6 @@ class CreateProjectBlock(QWidget):
         return platforms
     
     def get_creatives(self):
-        """Получает список всех креативов"""
         creatives = []
         for row in self.creative_rows:
             val = row.get_value()
@@ -237,12 +219,10 @@ class CreateProjectBlock(QWidget):
         return creatives
     
     def log(self, message):
-        """Добавляет сообщение в лог"""
         if self.log_callback:
             self.log_callback(message)
     
     def create_structure(self):
-        """Создаёт структуру папок"""
         project_name = self.project_name_field.text().strip()
         if not project_name:
             self.log("❌ Введите название проекта!")
@@ -258,7 +238,6 @@ class CreateProjectBlock(QWidget):
             self.log("❌ Добавьте хотя бы одно название креатива!")
             return
         
-        # Диалог выбора папки
         base_folder = QFileDialog.getExistingDirectory(
             self,
             "Выберите папку для создания проекта",
@@ -272,31 +251,26 @@ class CreateProjectBlock(QWidget):
         
         project_path = os.path.join(base_folder, project_name)
         
-        # Папки, в которых нужно создать креативы
         folders_with_creatives = ["animate", "ai", "img", "opt_img", "psd", "screen"]
         publish_folder = "publish"
         
         try:
             os.makedirs(project_path, exist_ok=True)
             
-            # Создаём папки с креативами
             for main_folder in folders_with_creatives:
                 main_folder_path = os.path.join(project_path, main_folder)
                 
                 if main_folder == "animate":
-                    # Для animate: animate/Площадка/Креатив
                     for platform in platforms:
                         platform_path = os.path.join(main_folder_path, platform)
                         for creative in creatives:
                             creative_path = os.path.join(platform_path, creative)
                             os.makedirs(creative_path, exist_ok=True)
                 else:
-                    # Для остальных папок: папка/Креатив
                     for creative in creatives:
                         creative_path = os.path.join(main_folder_path, creative)
                         os.makedirs(creative_path, exist_ok=True)
             
-            # Создаём пустую папку publish
             publish_path = os.path.join(project_path, publish_folder)
             os.makedirs(publish_path, exist_ok=True)
             
@@ -306,82 +280,11 @@ class CreateProjectBlock(QWidget):
             self.log(f"📁 Креативы ({len(creatives)}): {', '.join(creatives)}")
             self.log(f"📁 Папка 'publish' создана и оставлена пустой")
             
-            # Обновляем текущий проект в главном окне
             if self.update_project_callback:
                 self.update_project_callback(project_path)
             
-            # Показываем сообщение об успехе
             QMessageBox.information(self, "Успех", f"Проект '{project_name}' успешно создан!\n\nПуть: {project_path}")
             
         except Exception as e:
             self.log(f"❌ Ошибка создания проекта: {str(e)}")
             QMessageBox.critical(self, "Ошибка", f"Ошибка создания проекта:\n{str(e)}")
-    
-    def apply_styles(self):
-        """Применяем стили для карточек и кнопок"""
-        self.setStyleSheet("""
-            QFrame#card {
-                background-color: #1E1E1E;
-                border-radius: 12px;
-                padding: 15px;
-            }
-            
-            QLabel#card_title {
-                color: #4CAF50;
-                font-size: 16px;
-                font-weight: bold;
-                margin-bottom: 10px;
-            }
-            
-            QLineEdit {
-                background-color: #2A2A2A;
-                color: #FFFFFF;
-                border: 1px solid #3A3A3A;
-                border-radius: 6px;
-                padding: 8px 12px;
-                font-size: 14px;
-            }
-            
-            QLineEdit:focus {
-                border: 1px solid #4CAF50;
-            }
-            
-            QPushButton#add_btn {
-                background-color: #4CAF50;
-                color: white;
-                border: none;
-                border-radius: 18px;
-                font-size: 20px;
-                font-weight: bold;
-            }
-            
-            QPushButton#add_btn:hover {
-                background-color: #45a049;
-            }
-            
-            QPushButton#remove_btn {
-                background-color: #FF453A;
-                color: white;
-                border: none;
-                border-radius: 18px;
-                font-size: 20px;
-                font-weight: bold;
-            }
-            
-            QPushButton#remove_btn:hover {
-                background-color: #E03A2E;
-            }
-            
-            QPushButton#create_btn {
-                background-color: #4CAF50;
-                color: white;
-                border: none;
-                border-radius: 8px;
-                font-size: 16px;
-                font-weight: bold;
-            }
-            
-            QPushButton#create_btn:hover {
-                background-color: #45a049;
-            }
-        """)

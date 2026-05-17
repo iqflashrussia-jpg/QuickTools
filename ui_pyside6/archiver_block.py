@@ -1,5 +1,5 @@
 """
-Блок "Архивация" - создание ZIP архивов для папок с размерами (полная копия логики из Flet)
+Блок "Архивация" - создание ZIP архивов для папок с размерами
 """
 
 import os
@@ -7,9 +7,11 @@ import zipfile
 import shutil
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel,
-    QPushButton, QFrame, QProgressBar, QMessageBox
+    QPushButton, QFrame, QProgressBar
 )
 from PySide6.QtCore import Qt, QThread, Signal, QTimer
+
+from ui_pyside6.styles import apply_styles
 
 
 class ArchiverThread(QThread):
@@ -40,30 +42,22 @@ class ArchiverThread(QThread):
         
         self.log(f"🔍 Рекурсивное сканирование: {animate_path}")
         
-        # Рекурсивный обход всех папок
         for root, dirs, files in os.walk(animate_path):
             for dir_name in dirs:
                 if 'x' in dir_name.lower():
                     folder_path = os.path.join(root, dir_name)
-                    
-                    # Определяем путь относительно animate
                     rel_path = os.path.relpath(root, animate_path)
                     parts = rel_path.split(os.sep) if rel_path != '.' else []
-                    
-                    # Платформа - первый уровень
                     platform = parts[0] if len(parts) > 0 else "unknown"
-                    # Кампания - второй уровень  
                     campaign = parts[1] if len(parts) > 1 else "unknown"
-                    # Размер - имя папки
-                    size_name = dir_name
                     
                     folders.append({
                         'path': folder_path,
                         'platform': platform,
                         'campaign': campaign,
-                        'size': size_name
+                        'size': dir_name
                     })
-                    self.log(f"   ✅ Найдена папка: {platform}/{campaign}/{size_name}")
+                    self.log(f"   ✅ Найдена папка: {platform}/{campaign}/{dir_name}")
         
         self.log(f"📁 Всего найдено папок с 'x': {len(folders)}")
         return folders
@@ -123,12 +117,10 @@ class ArchiverThread(QThread):
                 
                 self.log(f"\n📦 [{idx+1}/{total}] {platform}/{campaign}/{size_name}")
                 
-                # Создаём архив
                 zip_name = f"{size_name}_{campaign}_{platform}.zip"
                 zip_output_dir = os.path.join(os.path.dirname(folder_path), "zip")
                 zip_path = os.path.join(zip_output_dir, zip_name)
                 
-                # Проверяем, не существует ли уже архив
                 if os.path.exists(zip_path):
                     self.log(f"  ⚠️ Архив уже существует: {zip_name}")
                     continue
@@ -265,7 +257,7 @@ class ArchiverBlock(QWidget):
         self.delete_thread = None
         
         self.setup_ui()
-        self.apply_styles()
+        apply_styles(self)
     
     def setup_ui(self):
         layout = QVBoxLayout(self)
@@ -360,7 +352,6 @@ class ArchiverBlock(QWidget):
             self.status_text.setText(f"Ошибка: {result['error']}")
         else:
             archive_count = result.get('archive_count', 0)
-            total = result.get('total', 0)
             reduction = result.get('total_reduction', 0)
             self.status_text.setText(f"Архивация завершена: {archive_count} архивов, сжатие {reduction:.0f}%")
         
@@ -410,86 +401,3 @@ class ArchiverBlock(QWidget):
     def update_project_path(self, new_path):
         self.project_path = new_path
         self.log(f"📂 Путь проекта обновлён: {new_path}")
-    
-    def apply_styles(self):
-        self.setStyleSheet("""
-            QLabel#block_title {
-                font-size: 18px;
-                font-weight: bold;
-                color: #4CAF50;
-            }
-            
-            QPushButton#archive_btn {
-                background-color: #4CAF50;
-                color: white;
-                border: none;
-                border-radius: 6px;
-                padding: 12px;
-                font-size: 14px;
-                font-weight: bold;
-            }
-            
-            QPushButton#archive_btn:hover {
-                background-color: #45a049;
-            }
-            
-            QPushButton#delete_btn {
-                background-color: #FF453A;
-                color: white;
-                border: none;
-                border-radius: 6px;
-                padding: 12px;
-                font-size: 14px;
-                font-weight: bold;
-            }
-            
-            QPushButton#delete_btn:hover {
-                background-color: #E03A2E;
-            }
-            
-            QPushButton#archive_btn:disabled, QPushButton#delete_btn:disabled {
-                background-color: #666;
-            }
-            
-            QProgressBar {
-                background-color: #2A2A2A;
-                border: 1px solid #3A3A3A;
-                border-radius: 4px;
-                text-align: center;
-                color: white;
-            }
-            
-            QProgressBar::chunk {
-                background-color: #4CAF50;
-                border-radius: 3px;
-            }
-            
-            QLabel#status_text {
-                color: #888888;
-                font-size: 12px;
-                margin-top: 10px;
-            }
-            
-            QFrame#hint_frame {
-                background-color: #1A1A1A;
-                border-radius: 8px;
-                padding: 10px;
-                margin-top: 10px;
-            }
-            
-            QLabel#hint_title {
-                color: #FFA500;
-                font-weight: bold;
-                margin-bottom: 5px;
-            }
-            
-            QLabel#hint_text {
-                color: #666666;
-                font-size: 11px;
-            }
-            
-            QLabel#progress_label {
-                color: #4CAF50;
-                font-size: 11px;
-            }
-        """)

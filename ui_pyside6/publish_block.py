@@ -9,7 +9,9 @@ from PySide6.QtWidgets import (
     QPushButton, QLineEdit, QScrollArea, QFrame,
     QMessageBox
 )
-from PySide6.QtCore import Qt, QThread, Signal, QTimer
+from PySide6.QtCore import Qt
+
+from ui_pyside6.styles import apply_styles
 
 
 class PlatformRow(QWidget):
@@ -69,14 +71,12 @@ class SubchannelCard(QWidget):
         main_layout.setSpacing(10)
         main_layout.setContentsMargins(0, 0, 0, 0)
         
-        # Карточка с рамкой
         self.card_frame = QFrame()
         self.card_frame.setObjectName("subchannel_card")
         layout = QVBoxLayout(self.card_frame)
         layout.setSpacing(10)
         layout.setContentsMargins(10, 10, 10, 10)
         
-        # Верхняя строка: поле названия и кнопки удаления/добавления подканала
         header_layout = QHBoxLayout()
         
         self.name_field = QLineEdit(subchannel_name)
@@ -84,14 +84,12 @@ class SubchannelCard(QWidget):
         self.name_field.setMinimumHeight(35)
         header_layout.addWidget(self.name_field, 1)
         
-        # Кнопка удаления подканала
         self.remove_card_btn = QPushButton("−")
         self.remove_card_btn.setFixedSize(30, 30)
         self.remove_card_btn.setObjectName("remove_btn")
         self.remove_card_btn.clicked.connect(self._on_remove_card)
         header_layout.addWidget(self.remove_card_btn)
         
-        # Кнопка добавления подканала
         self.add_card_btn = QPushButton("+")
         self.add_card_btn.setFixedSize(30, 30)
         self.add_card_btn.setObjectName("add_btn")
@@ -100,19 +98,16 @@ class SubchannelCard(QWidget):
         
         layout.addLayout(header_layout)
         
-        # Заголовок "Площадки"
         platforms_label = QLabel("Площадки:")
         platforms_label.setObjectName("platforms_label")
         layout.addWidget(platforms_label)
         
-        # Контейнер для площадок
         self.platforms_container = QVBoxLayout()
         self.platforms_container.setSpacing(5)
         layout.addLayout(self.platforms_container)
         
         main_layout.addWidget(self.card_frame)
         
-        # Добавляем первую площадку
         self.add_platform_row("Яндекс - Баннеры")
     
     def add_platform_row(self, value="Яндекс - Баннеры"):
@@ -196,9 +191,8 @@ class PublishBlock(QWidget):
         self.creative_rows = []
         
         self.setup_ui()
-        self.apply_styles()
+        apply_styles(self)
         
-        # Добавляем начальные поля
         self.add_subchannel_card("5_Context_Media")
         self.add_creative_row("creative")
     
@@ -207,7 +201,6 @@ class PublishBlock(QWidget):
         layout.setSpacing(15)
         layout.setContentsMargins(20, 20, 20, 20)
         
-        # Создаём скролл-зону
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QFrame.NoFrame)
@@ -241,7 +234,6 @@ class PublishBlock(QWidget):
         subchannels_title.setObjectName("card_title")
         subchannels_layout.addWidget(subchannels_title)
         
-        # Кнопка добавления подканала
         add_subchannel_layout = QHBoxLayout()
         add_subchannel_layout.addStretch()
         self.add_subchannel_btn = QPushButton("+ Добавить подканал")
@@ -250,7 +242,6 @@ class PublishBlock(QWidget):
         add_subchannel_layout.addWidget(self.add_subchannel_btn)
         subchannels_layout.addLayout(add_subchannel_layout)
         
-        # Контейнер для подканалов
         self.subchannels_container = QVBoxLayout()
         self.subchannels_container.setSpacing(10)
         subchannels_layout.addLayout(self.subchannels_container)
@@ -266,7 +257,6 @@ class PublishBlock(QWidget):
         creatives_title.setObjectName("card_title")
         creatives_layout.addWidget(creatives_title)
         
-        # Кнопка добавления креатива
         add_creative_layout = QHBoxLayout()
         add_creative_layout.addStretch()
         self.add_creative_btn = QPushButton("+ Добавить креатив")
@@ -275,14 +265,12 @@ class PublishBlock(QWidget):
         add_creative_layout.addWidget(self.add_creative_btn)
         creatives_layout.addLayout(add_creative_layout)
         
-        # Контейнер для креативов
         self.creatives_container = QVBoxLayout()
         self.creatives_container.setSpacing(5)
         creatives_layout.addLayout(self.creatives_container)
         
         scroll_layout.addWidget(creatives_card)
         
-        # Кнопка создания
         self.create_btn = QPushButton("СОЗДАТЬ")
         self.create_btn.setObjectName("create_btn")
         self.create_btn.setMinimumHeight(45)
@@ -295,7 +283,6 @@ class PublishBlock(QWidget):
         layout.addWidget(scroll)
     
     def add_subchannel_card(self, value="5_Context_Media"):
-        """Добавляет новую карточку подканала"""
         card = SubchannelCard(value, self.add_subchannel_card, self.remove_subchannel_card)
         self.subchannels_container.addWidget(card)
         self.subchannel_cards.append(card)
@@ -305,7 +292,6 @@ class PublishBlock(QWidget):
         self.subchannel_cards.remove(card)
     
     def add_creative_row(self, value="creative"):
-        """Добавляет новую строку креатива"""
         row = CreativeRow(value, self.add_creative_row, self.remove_creative_row)
         self.creatives_container.addWidget(row)
         self.creative_rows.append(row)
@@ -319,8 +305,6 @@ class PublishBlock(QWidget):
             self.log_callback(message)
     
     def create_structure(self):
-        """Создаёт структуру папок внутри publish"""
-        # Проверяем, выбрана ли рабочая папка
         if not self.project_path or not os.path.exists(self.project_path):
             self.log("❌ Сначала выберите рабочую папку с проектом или создайте проект!")
             QMessageBox.warning(self, "Ошибка", "Сначала выберите рабочую папку с проектом или создайте проект!")
@@ -332,7 +316,6 @@ class PublishBlock(QWidget):
             QMessageBox.warning(self, "Ошибка", "Введите название проекта!")
             return
         
-        # Собираем подканалы и площадки
         subchannels = []
         for card in self.subchannel_cards:
             subchannel_name = card.get_name()
@@ -357,7 +340,6 @@ class PublishBlock(QWidget):
             QMessageBox.warning(self, "Ошибка", "Добавьте хотя бы один подканал!")
             return
         
-        # Собираем креативы
         creatives = []
         for row in self.creative_rows:
             val = row.get_value()
@@ -370,11 +352,9 @@ class PublishBlock(QWidget):
             return
         
         try:
-            # Путь к папке publish
             publish_path = os.path.join(self.project_path, "publish", project_name)
             os.makedirs(publish_path, exist_ok=True)
             
-            # Создаём структуру: подканал → площадка → креатив
             created_count = 0
             for subchannel in subchannels:
                 subchannel_path = os.path.join(publish_path, subchannel["name"])
@@ -401,101 +381,5 @@ class PublishBlock(QWidget):
             QMessageBox.critical(self, "Ошибка", f"Ошибка создания структуры:\n{str(e)}")
     
     def update_project_path(self, new_path):
-        """Обновляет путь проекта"""
         self.project_path = new_path
         self.log(f"📂 Путь проекта обновлён: {new_path}")
-    
-    def apply_styles(self):
-        self.setStyleSheet("""
-            QFrame#card {
-                background-color: #1E1E1E;
-                border-radius: 12px;
-                padding: 15px;
-            }
-            
-            QFrame#subchannel_card {
-                background-color: #2A2A2A;
-                border-radius: 8px;
-                border: 1px solid #3A3A3A;
-            }
-            
-            QLabel#card_title {
-                color: #4CAF50;
-                font-size: 16px;
-                font-weight: bold;
-                margin-bottom: 10px;
-            }
-            
-            QLabel#platforms_label {
-                color: #888888;
-                font-size: 12px;
-                margin-top: 5px;
-            }
-            
-            QLineEdit {
-                background-color: #2A2A2A;
-                color: #FFFFFF;
-                border: 1px solid #3A3A3A;
-                border-radius: 6px;
-                padding: 8px 12px;
-                font-size: 14px;
-            }
-            
-            QLineEdit:focus {
-                border: 1px solid #4CAF50;
-            }
-            
-            QPushButton#add_btn {
-                background-color: #4CAF50;
-                color: white;
-                border: none;
-                border-radius: 15px;
-                font-size: 18px;
-                font-weight: bold;
-            }
-            
-            QPushButton#add_btn:hover {
-                background-color: #45a049;
-            }
-            
-            QPushButton#remove_btn {
-                background-color: #FF453A;
-                color: white;
-                border: none;
-                border-radius: 15px;
-                font-size: 18px;
-                font-weight: bold;
-            }
-            
-            QPushButton#remove_btn:hover {
-                background-color: #E03A2E;
-            }
-            
-            QPushButton#add_subchannel_btn, QPushButton#add_creative_btn {
-                background-color: #3A3A3A;
-                color: #4CAF50;
-                border: 1px solid #4CAF50;
-                border-radius: 6px;
-                padding: 8px 16px;
-                font-size: 12px;
-            }
-            
-            QPushButton#add_subchannel_btn:hover, QPushButton#add_creative_btn:hover {
-                background-color: #4CAF50;
-                color: white;
-            }
-            
-            QPushButton#create_btn {
-                background-color: #4CAF50;
-                color: white;
-                border: none;
-                border-radius: 8px;
-                font-size: 16px;
-                font-weight: bold;
-                padding: 12px;
-            }
-            
-            QPushButton#create_btn:hover {
-                background-color: #45a049;
-            }
-        """)

@@ -11,6 +11,8 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, QThread, Signal, QTimer
 
+from ui_pyside6.styles import apply_styles
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from modules import settings_finder, image_optimizer
 
@@ -44,30 +46,22 @@ class OptimizerThread(QThread):
         
         self.log(f"🔍 Рекурсивное сканирование: {animate_path}")
         
-        # Рекурсивный обход всех папок
         for root, dirs, files in os.walk(animate_path):
             for dir_name in dirs:
                 if 'x' in dir_name.lower():
                     folder_path = os.path.join(root, dir_name)
-                    
-                    # Определяем путь относительно animate
                     rel_path = os.path.relpath(root, animate_path)
                     parts = rel_path.split(os.sep) if rel_path != '.' else []
-                    
-                    # Платформа - первый уровень
                     platform = parts[0] if len(parts) > 0 else "unknown"
-                    # Кампания - второй уровень  
                     campaign = parts[1] if len(parts) > 1 else "unknown"
-                    # Размер - имя папки
-                    size_name = dir_name
                     
                     folders.append({
                         'path': folder_path,
                         'platform': platform,
                         'campaign': campaign,
-                        'size': size_name
+                        'size': dir_name
                     })
-                    self.log(f"   ✅ Найдена папка: {platform}/{campaign}/{size_name}")
+                    self.log(f"   ✅ Найдена папка: {platform}/{campaign}/{dir_name}")
         
         self.log(f"📁 Всего найдено папок с 'x': {len(folders)}")
         return folders
@@ -200,7 +194,7 @@ class OptimizerBlock(QWidget):
         self.optimizer_thread = None
         
         self.setup_ui()
-        self.apply_styles()
+        apply_styles(self)
     
     def setup_ui(self):
         layout = QVBoxLayout(self)
@@ -254,7 +248,7 @@ class OptimizerBlock(QWidget):
             "   • Для лимита ≥250 KB используется lossless сжатие (Oxipng)",
             "   • Для лимита <250 KB используется lossy сжатие (pngquant)",
             "   • JPEG сжимается с качеством 85-45 в зависимости от лимита",
-            "   • Работает только с папками animate/Платформа/Кампания/Размер"
+            "   • Работает с папками animate/.../размер (папки, содержащие 'x')"
         ]
         for hint in hints:
             hint_label = QLabel(hint)
@@ -318,94 +312,3 @@ class OptimizerBlock(QWidget):
     def update_project_path(self, new_path):
         self.project_path = new_path
         self.log(f"📂 Путь проекта обновлён: {new_path}")
-    
-    def apply_styles(self):
-        self.setStyleSheet("""
-            QLabel#block_title {
-                font-size: 18px;
-                font-weight: bold;
-                color: #4CAF50;
-            }
-            
-            QGroupBox {
-                color: #FFFFFF;
-                border: 1px solid #3A3A3A;
-                border-radius: 8px;
-                margin-top: 10px;
-                padding-top: 10px;
-                font-weight: bold;
-            }
-            
-            QGroupBox::title {
-                subcontrol-origin: margin;
-                left: 10px;
-                padding: 0 5px;
-            }
-            
-            QLineEdit {
-                background-color: #2A2A2A;
-                color: white;
-                border: 1px solid #3A3A3A;
-                border-radius: 4px;
-                padding: 5px;
-            }
-            
-            QPushButton#run_btn {
-                background-color: #4CAF50;
-                color: white;
-                border: none;
-                border-radius: 6px;
-                padding: 12px;
-                font-size: 14px;
-                font-weight: bold;
-            }
-            
-            QPushButton#run_btn:hover {
-                background-color: #45a049;
-            }
-            
-            QPushButton#run_btn:disabled {
-                background-color: #666;
-            }
-            
-            QProgressBar {
-                background-color: #2A2A2A;
-                border: 1px solid #3A3A3A;
-                border-radius: 4px;
-                text-align: center;
-                color: white;
-            }
-            
-            QProgressBar::chunk {
-                background-color: #4CAF50;
-                border-radius: 3px;
-            }
-            
-            QLabel#status_text {
-                color: #888888;
-                font-size: 12px;
-            }
-            
-            QFrame#hint_frame {
-                background-color: #1A1A1A;
-                border-radius: 8px;
-                padding: 10px;
-                margin-top: 10px;
-            }
-            
-            QLabel#hint_title {
-                color: #FFA500;
-                font-weight: bold;
-                margin-bottom: 5px;
-            }
-            
-            QLabel#hint_text {
-                color: #666666;
-                font-size: 11px;
-            }
-            
-            QLabel#progress_label {
-                color: #4CAF50;
-                font-size: 11px;
-            }
-        """)
