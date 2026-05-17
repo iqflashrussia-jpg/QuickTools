@@ -1,3 +1,4 @@
+# ui_pyside6/main_tabs.py
 """
 Главный экран с вкладками инструментов
 """
@@ -11,7 +12,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt
 
-from ui_pyside6.styles import apply_styles
+from ui_pyside6.styles import apply_styles, COLORS
 from ui_pyside6.icons_utils import set_icon, set_tab_icon
 
 
@@ -33,13 +34,17 @@ class MainTabs(QWidget):
             self.add_log("🆕 Режим создания нового проекта")
     
     def set_tab_icons(self):
-        """Устанавливает иконки на все вкладки"""
-        set_tab_icon(self.tabs, 0, 'briefcase', 16)
-        set_tab_icon(self.tabs, 1, 'send', 16)
-        set_tab_icon(self.tabs, 2, 'zap', 16)      # Оптимизация
-        set_tab_icon(self.tabs, 3, 'archive', 16)
-        set_tab_icon(self.tabs, 4, 'file-code', 16) # FLA операции
-        set_tab_icon(self.tabs, 5, 'pencil', 16)
+        """Устанавливает иконки на все вкладки с цветом из дизайн-системы"""
+        icon_color = COLORS.get("icon_tab_default", "#787E89")
+        icon_color_selected = COLORS.get("icon_tab_selected", "#071107")
+        
+        # Устанавливаем иконки на вкладки
+        set_tab_icon(self.tabs, 0, 'briefcase', 16, color=icon_color)
+        set_tab_icon(self.tabs, 1, 'send', 16, color=icon_color)
+        set_tab_icon(self.tabs, 2, 'bolt', 16, color=icon_color)
+        set_tab_icon(self.tabs, 3, 'archive', 16, color=icon_color)
+        set_tab_icon(self.tabs, 4, 'file', 16, color=icon_color)
+        set_tab_icon(self.tabs, 5, 'pencil', 16, color=icon_color)
     
     def add_log(self, message):
         """Добавить сообщение в лог"""
@@ -88,7 +93,9 @@ class MainTabs(QWidget):
         
         self.change_btn = QPushButton("Сменить проект")
         self.change_btn.setObjectName("change_btn")
-        set_icon(self.change_btn, 'folder_open', 16)
+        # Иконка с цветом из дизайн-системы
+        icon_color = COLORS.get("icon_default", "#ffffff")
+        set_icon(self.change_btn, 'folder_open', 16, color=icon_color)
         top_panel.addWidget(self.change_btn)
         
         layout.addLayout(top_panel)

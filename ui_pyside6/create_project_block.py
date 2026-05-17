@@ -1,3 +1,4 @@
+# ui_pyside6/create_project_block.py
 """
 Блок "Создание проекта" - создание структуры проекта с динамическими списками
 """
@@ -12,92 +13,8 @@ from PySide6.QtCore import Qt
 
 from ui_pyside6.styles import apply_styles
 from ui_pyside6.icons_utils import set_icon
-
-
-class PlatformRow(QWidget):
-    """Строка с полем для площадки и кнопками +/–"""
-    
-    def __init__(self, value="Master", on_add=None, on_remove=None):
-        super().__init__()
-        self.on_add = on_add
-        self.on_remove = on_remove
-        
-        layout = QHBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(8)
-        
-        self.text_field = QLineEdit(value)
-        self.text_field.setPlaceholderText("Название площадки")
-        self.text_field.setMinimumHeight(32)
-        layout.addWidget(self.text_field, 1)
-        
-        self.remove_btn = QPushButton()
-        set_icon(self.remove_btn, 'minus', 16)
-        self.remove_btn.setObjectName("remove_btn")
-        self.remove_btn.setFixedSize(28, 28)
-        self.remove_btn.clicked.connect(self._on_remove)
-        layout.addWidget(self.remove_btn)
-        
-        self.add_btn = QPushButton()
-        set_icon(self.add_btn, 'plus', 16)
-        self.add_btn.setObjectName("add_btn")
-        self.add_btn.setFixedSize(28, 28)
-        self.add_btn.clicked.connect(self._on_add)
-        layout.addWidget(self.add_btn)
-    
-    def _on_add(self):
-        if self.on_add:
-            self.on_add()
-    
-    def _on_remove(self):
-        if self.on_remove:
-            self.on_remove(self)
-    
-    def get_value(self):
-        return self.text_field.text().strip()
-
-
-class CreativeRow(QWidget):
-    """Строка с полем для креатива и кнопками +/–"""
-    
-    def __init__(self, value="creative", on_add=None, on_remove=None):
-        super().__init__()
-        self.on_add = on_add
-        self.on_remove = on_remove
-        
-        layout = QHBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(8)
-        
-        self.text_field = QLineEdit(value)
-        self.text_field.setPlaceholderText("Название креатива")
-        self.text_field.setMinimumHeight(32)
-        layout.addWidget(self.text_field, 1)
-        
-        self.remove_btn = QPushButton()
-        set_icon(self.remove_btn, 'minus', 16)
-        self.remove_btn.setObjectName("remove_btn")
-        self.remove_btn.setFixedSize(28, 28)
-        self.remove_btn.clicked.connect(self._on_remove)
-        layout.addWidget(self.remove_btn)
-        
-        self.add_btn = QPushButton()
-        set_icon(self.add_btn, 'plus', 16)
-        self.add_btn.setObjectName("add_btn")
-        self.add_btn.setFixedSize(28, 28)
-        self.add_btn.clicked.connect(self._on_add)
-        layout.addWidget(self.add_btn)
-    
-    def _on_add(self):
-        if self.on_add:
-            self.on_add()
-    
-    def _on_remove(self):
-        if self.on_remove:
-            self.on_remove(self)
-    
-    def get_value(self):
-        return self.text_field.text().strip()
+from ui_pyside6.common_widgets import PlatformRow, CreativeRow
+from ui_pyside6.shadow_utils import add_card_shadow
 
 
 class CreateProjectBlock(QWidget):
@@ -115,6 +32,11 @@ class CreateProjectBlock(QWidget):
         self.setup_ui()
         apply_styles(self)
         
+        # Добавляем тени карточкам
+        for card in self.cards:
+            add_card_shadow(card)
+        
+        # Добавляем начальные строки
         self.add_platform_row("Master")
         self.add_creative_row("creative")
     
@@ -123,40 +45,49 @@ class CreateProjectBlock(QWidget):
         main_layout.setSpacing(15)
         main_layout.setContentsMargins(15, 15, 15, 15)
         
+        # Список для хранения карточек (чтобы добавить тени)
+        self.cards = []
+        
+        # Область с прокруткой
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QFrame.NoFrame)
-        # Явные стили для скролла
-        scroll.setStyleSheet("""
-            QScrollArea {
-                border: none;
-                background-color: transparent;
-            }
-            QScrollBar:vertical {
-                background-color: #1a1a2e;
-                width: 8px;
-                border-radius: 4px;
-            }
-            QScrollBar::handle:vertical {
-                background-color: #55c84f;
-                border-radius: 4px;
-                min-height: 40px;
-            }
-            QScrollBar::handle:vertical:hover {
-                background-color: #45b240;
-            }
-            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
-                height: 0px;
-            }
-        """)
         
         scroll_content = QWidget()
         scroll_layout = QVBoxLayout(scroll_content)
         scroll_layout.setSpacing(15)
         
-        # Карточка 1: Название проекта
+        # === ДОБАВЛЯЕМ ТЕНЬ НА КОНТЕНТ ===
+        from PySide6.QtWidgets import QGraphicsDropShadowEffect
+        from PySide6.QtGui import QColor
+        shadow = QGraphicsDropShadowEffect()
+        shadow.setBlurRadius(20)           # Мягкость тени
+        shadow.setXOffset(0)                # Смещение по X
+        shadow.setYOffset(6)                # Смещение по Y (вниз)
+        shadow.setColor(QColor(0, 0, 0, 100))  # Чёрный с прозрачностью
+        scroll_content.setGraphicsEffect(shadow)
+        scroll_content.setAttribute(Qt.WA_StyledBackground, True)
+        # === КОНЕЦ ===
+        
+        # ========== КАРТОЧКА 1: Название проекта ==========
         project_card = QFrame()
         project_card.setObjectName("card")
+        project_card.setAttribute(Qt.WA_StyledBackground, True)  # ВАЖНО
+        self.cards.append(project_card)
+
+        # === ПРИНУДИТЕЛЬНАЯ ТЕНЬ ===
+        from PySide6.QtWidgets import QGraphicsDropShadowEffect
+        from PySide6.QtGui import QColor
+        test_shadow = QGraphicsDropShadowEffect()
+        test_shadow.setBlurRadius(20)
+        test_shadow.setXOffset(0)
+        test_shadow.setYOffset(8)
+        test_shadow.setColor(QColor(0, 255, 0, 200))  # Ярко-зелёная
+        project_card.setGraphicsEffect(test_shadow)
+        # Не забываем отключить авто-заполнение фона
+        project_card.setAutoFillBackground(False)
+        # === КОНЕЦ ТЕСТА ===
+
         project_layout = QVBoxLayout(project_card)
         project_layout.setSpacing(8)
         
@@ -171,9 +102,10 @@ class CreateProjectBlock(QWidget):
         
         scroll_layout.addWidget(project_card)
         
-        # Карточка 2: Площадки
+        # ========== КАРТОЧКА 2: Площадки ==========
         platforms_card = QFrame()
         platforms_card.setObjectName("card")
+        self.cards.append(platforms_card)
         platforms_layout = QVBoxLayout(platforms_card)
         platforms_layout.setSpacing(8)
         
@@ -187,9 +119,10 @@ class CreateProjectBlock(QWidget):
         
         scroll_layout.addWidget(platforms_card)
         
-        # Карточка 3: Названия креативов
+        # ========== КАРТОЧКА 3: Названия креативов ==========
         creatives_card = QFrame()
         creatives_card.setObjectName("card")
+        self.cards.append(creatives_card)
         creatives_layout = QVBoxLayout(creatives_card)
         creatives_layout.setSpacing(8)
         
@@ -203,7 +136,7 @@ class CreateProjectBlock(QWidget):
         
         scroll_layout.addWidget(creatives_card)
         
-        # Кнопка создания
+        # ========== КНОПКА СОЗДАНИЯ ==========
         self.create_btn = QPushButton("СОЗДАТЬ")
         self.create_btn.setObjectName("create_btn")
         set_icon(self.create_btn, 'plus', 16)
@@ -217,24 +150,29 @@ class CreateProjectBlock(QWidget):
         main_layout.addWidget(scroll)
     
     def add_platform_row(self, value="Master"):
+        """Добавляет новую строку для ввода площадки"""
         row = PlatformRow(value, self.add_platform_row, self.remove_platform_row)
         self.platforms_container.addWidget(row)
         self.platform_rows.append(row)
     
     def remove_platform_row(self, row):
+        """Удаляет строку площадки"""
         row.deleteLater()
         self.platform_rows.remove(row)
     
     def add_creative_row(self, value="creative"):
+        """Добавляет новую строку для ввода креатива"""
         row = CreativeRow(value, self.add_creative_row, self.remove_creative_row)
         self.creatives_container.addWidget(row)
         self.creative_rows.append(row)
     
     def remove_creative_row(self, row):
+        """Удаляет строку креатива"""
         row.deleteLater()
         self.creative_rows.remove(row)
     
     def get_platforms(self):
+        """Возвращает список всех площадок"""
         platforms = []
         for row in self.platform_rows:
             val = row.get_value()
@@ -243,6 +181,7 @@ class CreateProjectBlock(QWidget):
         return platforms
     
     def get_creatives(self):
+        """Возвращает список всех креативов"""
         creatives = []
         for row in self.creative_rows:
             val = row.get_value()
@@ -251,10 +190,12 @@ class CreateProjectBlock(QWidget):
         return creatives
     
     def log(self, message):
+        """Отправляет сообщение в лог"""
         if self.log_callback:
             self.log_callback(message)
     
     def create_structure(self):
+        """Создаёт структуру папок проекта"""
         project_name = self.project_name_field.text().strip()
         if not project_name:
             self.log("❌ Введите название проекта!")

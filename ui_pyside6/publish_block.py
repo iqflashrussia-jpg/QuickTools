@@ -1,3 +1,4 @@
+# ui_pyside6/publish_block.py
 """
 Блок "Publish" - создание структуры внутри папки publish.
 Структура: проект/подканал/площадка/креатив
@@ -13,53 +14,14 @@ from PySide6.QtCore import Qt
 
 from ui_pyside6.styles import apply_styles
 from ui_pyside6.icons_utils import set_icon
-
-
-class PlatformRow(QWidget):
-    """Строка с полем для площадки и кнопками +/–"""
-    
-    def __init__(self, value="Яндекс - Баннеры", on_add=None, on_remove=None):
-        super().__init__()
-        self.on_add = on_add
-        self.on_remove = on_remove
-        
-        layout = QHBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(8)
-        
-        self.text_field = QLineEdit(value)
-        self.text_field.setPlaceholderText("Название площадки")
-        self.text_field.setMinimumHeight(32)
-        layout.addWidget(self.text_field, 1)
-        
-        self.remove_btn = QPushButton()
-        set_icon(self.remove_btn, 'minus', 16)
-        self.remove_btn.setObjectName("remove_btn")
-        self.remove_btn.setFixedSize(28, 28)
-        self.remove_btn.clicked.connect(self._on_remove)
-        layout.addWidget(self.remove_btn)
-        
-        self.add_btn = QPushButton()
-        set_icon(self.add_btn, 'plus', 16)
-        self.add_btn.setObjectName("add_btn")
-        self.add_btn.setFixedSize(28, 28)
-        self.add_btn.clicked.connect(self._on_add)
-        layout.addWidget(self.add_btn)
-    
-    def _on_add(self):
-        if self.on_add:
-            self.on_add()
-    
-    def _on_remove(self):
-        if self.on_remove:
-            self.on_remove(self)
-    
-    def get_value(self):
-        return self.text_field.text().strip()
+from ui_pyside6.common_widgets import PlatformRow, CreativeRow
 
 
 class SubchannelCard(QWidget):
-    """Карточка подканала с его площадками"""
+    """
+    Карточка подканала с его площадками.
+    Уникальный виджет для вкладки "Публикация"
+    """
     
     def __init__(self, subchannel_name="5_Context_Media", on_add_subchannel=None, on_remove_subchannel=None):
         super().__init__()
@@ -80,6 +42,7 @@ class SubchannelCard(QWidget):
         layout.setSpacing(8)
         layout.setContentsMargins(10, 10, 10, 10)
         
+        # Верхняя строка: название подканала и кнопки
         header_layout = QHBoxLayout()
         header_layout.setSpacing(8)
         
@@ -104,28 +67,34 @@ class SubchannelCard(QWidget):
         
         layout.addLayout(header_layout)
         
+        # Метка "Площадки"
         platforms_label = QLabel("Площадки:")
         platforms_label.setObjectName("platforms_label")
         layout.addWidget(platforms_label)
         
+        # Контейнер для строк площадок
         self.platforms_container = QVBoxLayout()
         self.platforms_container.setSpacing(5)
         layout.addLayout(self.platforms_container)
         
         main_layout.addWidget(self.card_frame)
         
+        # Добавляем первую площадку по умолчанию
         self.add_platform_row("Яндекс - Баннеры")
     
     def add_platform_row(self, value="Яндекс - Баннеры"):
+        """Добавляет новую строку площадки в этот подканал"""
         row = PlatformRow(value, self.add_platform_row, self.remove_platform_row)
         self.platforms_container.addWidget(row)
         self.platform_rows.append(row)
     
     def remove_platform_row(self, row):
+        """Удаляет строку площадки из этого подканала"""
         row.deleteLater()
         self.platform_rows.remove(row)
     
     def get_platforms(self):
+        """Возвращает список всех площадок в этом подканале"""
         platforms = []
         for row in self.platform_rows:
             val = row.get_value()
@@ -134,62 +103,22 @@ class SubchannelCard(QWidget):
         return platforms
     
     def get_name(self):
+        """Возвращает название подканала"""
         return self.name_field.text().strip()
     
     def _on_remove_card(self):
+        """Удаляет эту карточку подканала"""
         if self.on_remove_subchannel:
             self.on_remove_subchannel(self)
     
     def _on_add_card(self):
+        """Добавляет новый подканал"""
         if self.on_add_subchannel:
             self.on_add_subchannel()
 
 
-class CreativeRow(QWidget):
-    """Строка с полем для креатива и кнопками +/–"""
-    
-    def __init__(self, value="creative", on_add=None, on_remove=None):
-        super().__init__()
-        self.on_add = on_add
-        self.on_remove = on_remove
-        
-        layout = QHBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(8)
-        
-        self.text_field = QLineEdit(value)
-        self.text_field.setPlaceholderText("Название креатива")
-        self.text_field.setMinimumHeight(32)
-        layout.addWidget(self.text_field, 1)
-        
-        self.remove_btn = QPushButton()
-        set_icon(self.remove_btn, 'minus', 16)
-        self.remove_btn.setObjectName("remove_btn")
-        self.remove_btn.setFixedSize(28, 28)
-        self.remove_btn.clicked.connect(self._on_remove)
-        layout.addWidget(self.remove_btn)
-        
-        self.add_btn = QPushButton()
-        set_icon(self.add_btn, 'plus', 16)
-        self.add_btn.setObjectName("add_btn")
-        self.add_btn.setFixedSize(28, 28)
-        self.add_btn.clicked.connect(self._on_add)
-        layout.addWidget(self.add_btn)
-    
-    def _on_add(self):
-        if self.on_add:
-            self.on_add()
-    
-    def _on_remove(self):
-        if self.on_remove:
-            self.on_remove(self)
-    
-    def get_value(self):
-        return self.text_field.text().strip()
-
-
 class PublishBlock(QWidget):
-    """Вкладка публикации"""
+    """Вкладка публикации - создание структуры в папке publish"""
     
     def __init__(self, project_path, log_callback=None):
         super().__init__()
@@ -201,6 +130,7 @@ class PublishBlock(QWidget):
         self.setup_ui()
         apply_styles(self)
         
+        # Добавляем начальные элементы
         self.add_subchannel_card("5_Context_Media")
         self.add_creative_row("creative")
     
@@ -209,38 +139,16 @@ class PublishBlock(QWidget):
         layout.setSpacing(15)
         layout.setContentsMargins(15, 15, 15, 15)
         
+        # Область с прокруткой (стили берутся из styles.py)
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QFrame.NoFrame)
-        # Явные стили для скролла
-        scroll.setStyleSheet("""
-            QScrollArea {
-                border: none;
-                background-color: transparent;
-            }
-            QScrollBar:vertical {
-                background-color: #1a1a2e;
-                width: 8px;
-                border-radius: 4px;
-            }
-            QScrollBar::handle:vertical {
-                background-color: #55c84f;
-                border-radius: 4px;
-                min-height: 40px;
-            }
-            QScrollBar::handle:vertical:hover {
-                background-color: #45b240;
-            }
-            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
-                height: 0px;
-            }
-        """)
         
         scroll_content = QWidget()
         scroll_layout = QVBoxLayout(scroll_content)
         scroll_layout.setSpacing(15)
         
-        # Карточка 1: Название проекта
+        # ========== КАРТОЧКА 1: Название проекта ==========
         project_card = QFrame()
         project_card.setObjectName("card")
         project_layout = QVBoxLayout(project_card)
@@ -257,7 +165,7 @@ class PublishBlock(QWidget):
         
         scroll_layout.addWidget(project_card)
         
-        # Карточка 2: Подканалы и площадки
+        # ========== КАРТОЧКА 2: Подканалы и площадки ==========
         subchannels_card = QFrame()
         subchannels_card.setObjectName("card")
         subchannels_layout = QVBoxLayout(subchannels_card)
@@ -267,6 +175,7 @@ class PublishBlock(QWidget):
         subchannels_title.setObjectName("card_title")
         subchannels_layout.addWidget(subchannels_title)
         
+        # Кнопка добавления подканала
         add_subchannel_layout = QHBoxLayout()
         add_subchannel_layout.addStretch()
         self.add_subchannel_btn = QPushButton("+ Добавить подканал")
@@ -275,13 +184,14 @@ class PublishBlock(QWidget):
         add_subchannel_layout.addWidget(self.add_subchannel_btn)
         subchannels_layout.addLayout(add_subchannel_layout)
         
+        # Контейнер для карточек подканалов
         self.subchannels_container = QVBoxLayout()
         self.subchannels_container.setSpacing(8)
         subchannels_layout.addLayout(self.subchannels_container)
         
         scroll_layout.addWidget(subchannels_card)
         
-        # Карточка 3: Названия креативов
+        # ========== КАРТОЧКА 3: Названия креативов ==========
         creatives_card = QFrame()
         creatives_card.setObjectName("card")
         creatives_layout = QVBoxLayout(creatives_card)
@@ -291,6 +201,7 @@ class PublishBlock(QWidget):
         creatives_title.setObjectName("card_title")
         creatives_layout.addWidget(creatives_title)
         
+        # Кнопка добавления креатива
         add_creative_layout = QHBoxLayout()
         add_creative_layout.addStretch()
         self.add_creative_btn = QPushButton("+ Добавить креатив")
@@ -299,13 +210,14 @@ class PublishBlock(QWidget):
         add_creative_layout.addWidget(self.add_creative_btn)
         creatives_layout.addLayout(add_creative_layout)
         
+        # Контейнер для строк креативов
         self.creatives_container = QVBoxLayout()
         self.creatives_container.setSpacing(5)
         creatives_layout.addLayout(self.creatives_container)
         
         scroll_layout.addWidget(creatives_card)
         
-        # Кнопка создания
+        # ========== КНОПКА СОЗДАНИЯ ==========
         self.create_btn = QPushButton("СОЗДАТЬ")
         self.create_btn.setObjectName("create_btn")
         set_icon(self.create_btn, 'plus', 16)
@@ -319,39 +231,48 @@ class PublishBlock(QWidget):
         layout.addWidget(scroll)
     
     def add_subchannel_card(self, value="5_Context_Media"):
+        """Добавляет новую карточку подканала"""
         card = SubchannelCard(value, self.add_subchannel_card, self.remove_subchannel_card)
         self.subchannels_container.addWidget(card)
         self.subchannel_cards.append(card)
     
     def remove_subchannel_card(self, card):
+        """Удаляет карточку подканала"""
         card.deleteLater()
         self.subchannel_cards.remove(card)
     
     def add_creative_row(self, value="creative"):
+        """Добавляет новую строку креатива"""
         row = CreativeRow(value, self.add_creative_row, self.remove_creative_row)
         self.creatives_container.addWidget(row)
         self.creative_rows.append(row)
     
     def remove_creative_row(self, row):
+        """Удаляет строку креатива"""
         row.deleteLater()
         self.creative_rows.remove(row)
     
     def log(self, message):
+        """Отправляет сообщение в лог"""
         if self.log_callback:
             self.log_callback(message)
     
     def create_structure(self):
+        """Создаёт структуру папок публикации внутри проекта"""
+        # Проверяем, выбран ли проект
         if not self.project_path or not os.path.exists(self.project_path):
             self.log("❌ Сначала выберите рабочую папку с проектом или создайте проект!")
             QMessageBox.warning(self, "Ошибка", "Сначала выберите рабочую папку с проектом или создайте проект!")
             return
         
+        # Проверяем название проекта
         project_name = self.project_name_field.text().strip()
         if not project_name:
             self.log("❌ Введите название проекта!")
             QMessageBox.warning(self, "Ошибка", "Введите название проекта!")
             return
         
+        # Собираем данные по подканалам
         subchannels = []
         for card in self.subchannel_cards:
             subchannel_name = card.get_name()
@@ -376,6 +297,7 @@ class PublishBlock(QWidget):
             QMessageBox.warning(self, "Ошибка", "Добавьте хотя бы один подканал!")
             return
         
+        # Собираем названия креативов
         creatives = []
         for row in self.creative_rows:
             val = row.get_value()
@@ -387,6 +309,7 @@ class PublishBlock(QWidget):
             QMessageBox.warning(self, "Ошибка", "Добавьте хотя бы одно название креатива!")
             return
         
+        # Создаём структуру папок
         try:
             publish_path = os.path.join(self.project_path, "publish", project_name)
             os.makedirs(publish_path, exist_ok=True)
@@ -417,5 +340,6 @@ class PublishBlock(QWidget):
             QMessageBox.critical(self, "Ошибка", f"Ошибка создания структуры:\n{str(e)}")
     
     def update_project_path(self, new_path):
+        """Обновляет путь текущего проекта (вызывается из главного окна)"""
         self.project_path = new_path
         self.log(f"📂 Путь проекта обновлён: {new_path}")
