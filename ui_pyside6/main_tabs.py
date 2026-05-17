@@ -6,11 +6,13 @@ import os
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QTabWidget,
     QLabel, QPushButton, QFileDialog, QTextEdit,
-    QSlider, QLineEdit, QCheckBox, QGroupBox, QGridLayout
+    QSlider, QLineEdit, QCheckBox, QGroupBox, QGridLayout,
+    QFrame
 )
 from PySide6.QtCore import Qt
 
 from ui_pyside6.styles import apply_styles
+from ui_pyside6.icons_utils import set_icon, set_tab_icon
 
 
 class MainTabs(QWidget):
@@ -24,8 +26,20 @@ class MainTabs(QWidget):
         self.setup_ui()
         apply_styles(self)
         
+        # Устанавливаем иконки на вкладки ПОСЛЕ того, как они созданы
+        self.set_tab_icons()
+        
         if project_path is None:
             self.add_log("🆕 Режим создания нового проекта")
+    
+    def set_tab_icons(self):
+        """Устанавливает иконки на все вкладки"""
+        set_tab_icon(self.tabs, 0, 'briefcase', 16)
+        set_tab_icon(self.tabs, 1, 'send', 16)
+        set_tab_icon(self.tabs, 2, 'zap', 16)      # Оптимизация
+        set_tab_icon(self.tabs, 3, 'archive', 16)
+        set_tab_icon(self.tabs, 4, 'file-code', 16) # FLA операции
+        set_tab_icon(self.tabs, 5, 'pencil', 16)
     
     def add_log(self, message):
         """Добавить сообщение в лог"""
@@ -62,6 +76,7 @@ class MainTabs(QWidget):
         layout.setContentsMargins(20, 20, 20, 20)
         layout.setSpacing(15)
         
+        # Верхняя панель с названием проекта
         top_panel = QHBoxLayout()
         top_panel.addWidget(QLabel("📂 Текущий проект:"))
         
@@ -73,22 +88,32 @@ class MainTabs(QWidget):
         
         self.change_btn = QPushButton("Сменить проект")
         self.change_btn.setObjectName("change_btn")
+        set_icon(self.change_btn, 'folder_open', 16)
         top_panel.addWidget(self.change_btn)
         
         layout.addLayout(top_panel)
         
+        # Разделитель
+        separator = QFrame()
+        separator.setObjectName("separator")
+        separator.setFrameShape(QFrame.HLine)
+        layout.addWidget(separator)
+        
+        # Создаём вкладки
         self.tabs = QTabWidget()
         self.tabs.setObjectName("main_tabs")
         
-        self.tabs.addTab(self.create_project_tab(), "📁 Создание проекта")
-        self.tabs.addTab(self.create_publish_tab(), "📤 Публикация")
-        self.tabs.addTab(self.create_optimizer_tab(), "📦 Оптимизация")
-        self.tabs.addTab(self.create_archiver_tab(), "🗜 Архивация")
-        self.tabs.addTab(self.create_fla_tab(), "🎬 FLA операции")
-        self.tabs.addTab(self.create_rename_tab(), "✏️ Переименование")
+        # Добавляем вкладки (иконки будут установлены в set_tab_icons)
+        self.tabs.addTab(self.create_project_tab(), "Создание проекта")
+        self.tabs.addTab(self.create_publish_tab(), "Публикация")
+        self.tabs.addTab(self.create_optimizer_tab(), "Оптимизация")
+        self.tabs.addTab(self.create_archiver_tab(), "Архивация")
+        self.tabs.addTab(self.create_fla_tab(), "FLA операции")
+        self.tabs.addTab(self.create_rename_tab(), "Переименование")
         
         layout.addWidget(self.tabs, 1)
         
+        # Нижняя панель с логом
         self.log = QTextEdit()
         self.log.setReadOnly(True)
         self.log.setMaximumHeight(150)

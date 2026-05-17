@@ -219,6 +219,8 @@ class OptimizerBlock(QWidget):
         
         self.run_btn = QPushButton("ОПТИМИЗИРОВАТЬ ВСЕ")
         self.run_btn.setObjectName("run_btn")
+        from ui_pyside6.icons_utils import set_icon
+        set_icon(self.run_btn, 'zap', 18)  # добавляем иконку молнии
         self.run_btn.clicked.connect(self.start_optimization)
         layout.addWidget(self.run_btn)
         

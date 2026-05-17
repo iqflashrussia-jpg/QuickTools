@@ -273,11 +273,14 @@ class ArchiverBlock(QWidget):
         
         self.archive_btn = QPushButton("АРХИВИРОВАТЬ ВСЕ")
         self.archive_btn.setObjectName("archive_btn")
+        from ui_pyside6.icons_utils import set_icon
+        set_icon(self.archive_btn, 'archive', 18)
         self.archive_btn.clicked.connect(self.start_archive)
         buttons_layout.addWidget(self.archive_btn, 1)
         
         self.delete_btn = QPushButton("УДАЛИТЬ ВСЕ АРХИВЫ")
         self.delete_btn.setObjectName("delete_btn")
+        set_icon(self.delete_btn, 'trash', 18)
         self.delete_btn.clicked.connect(self.start_delete)
         buttons_layout.addWidget(self.delete_btn, 1)
         

@@ -129,11 +129,14 @@ class FlaBlock(QWidget):
         
         self.search_by_size_btn = QPushButton("Открыть .fla по размеру")
         self.search_by_size_btn.setObjectName("search_btn")
+        from ui_pyside6.icons_utils import set_icon
+        set_icon(self.search_by_size_btn, 'search', 18)
         self.search_by_size_btn.clicked.connect(self.search_by_size)
         buttons_layout.addWidget(self.search_by_size_btn, 1)
         
         self.search_all_btn = QPushButton("Открыть все .fla")
         self.search_all_btn.setObjectName("search_all_btn")
+        set_icon(self.search_all_btn, 'folder', 18)
         self.search_all_btn.clicked.connect(self.search_all)
         buttons_layout.addWidget(self.search_all_btn, 1)
         

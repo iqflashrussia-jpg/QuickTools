@@ -214,6 +214,8 @@ class RenameBlock(QWidget):
         
         self.rename_btn = QPushButton("ЗАМЕНИТЬ ВСЁ")
         self.rename_btn.setObjectName("rename_btn")
+        from ui_pyside6.icons_utils import set_icon
+        set_icon(self.rename_btn, 'pencil', 18)
         self.rename_btn.clicked.connect(self.start_rename)
         layout.addWidget(self.rename_btn)
         

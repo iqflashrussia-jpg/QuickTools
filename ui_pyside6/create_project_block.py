@@ -11,6 +11,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt
 
 from ui_pyside6.styles import apply_styles
+from ui_pyside6.icons_utils import set_icon
 
 
 class PlatformRow(QWidget):
@@ -23,22 +24,24 @@ class PlatformRow(QWidget):
         
         layout = QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(10)
+        layout.setSpacing(8)
         
         self.text_field = QLineEdit(value)
         self.text_field.setPlaceholderText("Название площадки")
-        self.text_field.setMinimumHeight(40)
+        self.text_field.setMinimumHeight(32)
         layout.addWidget(self.text_field, 1)
         
-        self.remove_btn = QPushButton("−")
-        self.remove_btn.setFixedSize(36, 36)
+        self.remove_btn = QPushButton()
+        set_icon(self.remove_btn, 'minus', 16)
         self.remove_btn.setObjectName("remove_btn")
+        self.remove_btn.setFixedSize(28, 28)
         self.remove_btn.clicked.connect(self._on_remove)
         layout.addWidget(self.remove_btn)
         
-        self.add_btn = QPushButton("+")
-        self.add_btn.setFixedSize(36, 36)
+        self.add_btn = QPushButton()
+        set_icon(self.add_btn, 'plus', 16)
         self.add_btn.setObjectName("add_btn")
+        self.add_btn.setFixedSize(28, 28)
         self.add_btn.clicked.connect(self._on_add)
         layout.addWidget(self.add_btn)
     
@@ -64,22 +67,24 @@ class CreativeRow(QWidget):
         
         layout = QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(10)
+        layout.setSpacing(8)
         
         self.text_field = QLineEdit(value)
         self.text_field.setPlaceholderText("Название креатива")
-        self.text_field.setMinimumHeight(40)
+        self.text_field.setMinimumHeight(32)
         layout.addWidget(self.text_field, 1)
         
-        self.remove_btn = QPushButton("−")
-        self.remove_btn.setFixedSize(36, 36)
+        self.remove_btn = QPushButton()
+        set_icon(self.remove_btn, 'minus', 16)
         self.remove_btn.setObjectName("remove_btn")
+        self.remove_btn.setFixedSize(28, 28)
         self.remove_btn.clicked.connect(self._on_remove)
         layout.addWidget(self.remove_btn)
         
-        self.add_btn = QPushButton("+")
-        self.add_btn.setFixedSize(36, 36)
+        self.add_btn = QPushButton()
+        set_icon(self.add_btn, 'plus', 16)
         self.add_btn.setObjectName("add_btn")
+        self.add_btn.setFixedSize(28, 28)
         self.add_btn.clicked.connect(self._on_add)
         layout.addWidget(self.add_btn)
     
@@ -115,21 +120,45 @@ class CreateProjectBlock(QWidget):
     
     def setup_ui(self):
         main_layout = QVBoxLayout(self)
-        main_layout.setSpacing(20)
-        main_layout.setContentsMargins(20, 20, 20, 20)
+        main_layout.setSpacing(15)
+        main_layout.setContentsMargins(15, 15, 15, 15)
         
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QFrame.NoFrame)
+        # Явные стили для скролла
+        scroll.setStyleSheet("""
+            QScrollArea {
+                border: none;
+                background-color: transparent;
+            }
+            QScrollBar:vertical {
+                background-color: #1a1a2e;
+                width: 8px;
+                border-radius: 4px;
+            }
+            QScrollBar::handle:vertical {
+                background-color: #55c84f;
+                border-radius: 4px;
+                min-height: 40px;
+            }
+            QScrollBar::handle:vertical:hover {
+                background-color: #45b240;
+            }
+            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+                height: 0px;
+            }
+        """)
         
         scroll_content = QWidget()
         scroll_layout = QVBoxLayout(scroll_content)
-        scroll_layout.setSpacing(20)
+        scroll_layout.setSpacing(15)
         
         # Карточка 1: Название проекта
         project_card = QFrame()
         project_card.setObjectName("card")
         project_layout = QVBoxLayout(project_card)
+        project_layout.setSpacing(8)
         
         project_title = QLabel("Название проекта")
         project_title.setObjectName("card_title")
@@ -137,7 +166,7 @@ class CreateProjectBlock(QWidget):
         
         self.project_name_field = QLineEdit("PROD")
         self.project_name_field.setPlaceholderText("Введите название проекта")
-        self.project_name_field.setMinimumHeight(45)
+        self.project_name_field.setMinimumHeight(36)
         project_layout.addWidget(self.project_name_field)
         
         scroll_layout.addWidget(project_card)
@@ -146,13 +175,14 @@ class CreateProjectBlock(QWidget):
         platforms_card = QFrame()
         platforms_card.setObjectName("card")
         platforms_layout = QVBoxLayout(platforms_card)
+        platforms_layout.setSpacing(8)
         
         platforms_title = QLabel("Площадки")
         platforms_title.setObjectName("card_title")
         platforms_layout.addWidget(platforms_title)
         
         self.platforms_container = QVBoxLayout()
-        self.platforms_container.setSpacing(10)
+        self.platforms_container.setSpacing(8)
         platforms_layout.addLayout(self.platforms_container)
         
         scroll_layout.addWidget(platforms_card)
@@ -161,13 +191,14 @@ class CreateProjectBlock(QWidget):
         creatives_card = QFrame()
         creatives_card.setObjectName("card")
         creatives_layout = QVBoxLayout(creatives_card)
+        creatives_layout.setSpacing(8)
         
         creatives_title = QLabel("Названия креативов")
         creatives_title.setObjectName("card_title")
         creatives_layout.addWidget(creatives_title)
         
         self.creatives_container = QVBoxLayout()
-        self.creatives_container.setSpacing(10)
+        self.creatives_container.setSpacing(8)
         creatives_layout.addLayout(self.creatives_container)
         
         scroll_layout.addWidget(creatives_card)
@@ -175,7 +206,8 @@ class CreateProjectBlock(QWidget):
         # Кнопка создания
         self.create_btn = QPushButton("СОЗДАТЬ")
         self.create_btn.setObjectName("create_btn")
-        self.create_btn.setMinimumHeight(50)
+        set_icon(self.create_btn, 'plus', 16)
+        self.create_btn.setMinimumHeight(40)
         self.create_btn.clicked.connect(self.create_structure)
         scroll_layout.addWidget(self.create_btn)
         

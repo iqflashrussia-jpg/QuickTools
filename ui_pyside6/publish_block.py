@@ -12,6 +12,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt
 
 from ui_pyside6.styles import apply_styles
+from ui_pyside6.icons_utils import set_icon
 
 
 class PlatformRow(QWidget):
@@ -24,22 +25,24 @@ class PlatformRow(QWidget):
         
         layout = QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(10)
+        layout.setSpacing(8)
         
         self.text_field = QLineEdit(value)
         self.text_field.setPlaceholderText("Название площадки")
-        self.text_field.setMinimumHeight(35)
+        self.text_field.setMinimumHeight(32)
         layout.addWidget(self.text_field, 1)
         
-        self.remove_btn = QPushButton("−")
-        self.remove_btn.setFixedSize(30, 30)
+        self.remove_btn = QPushButton()
+        set_icon(self.remove_btn, 'minus', 16)
         self.remove_btn.setObjectName("remove_btn")
+        self.remove_btn.setFixedSize(28, 28)
         self.remove_btn.clicked.connect(self._on_remove)
         layout.addWidget(self.remove_btn)
         
-        self.add_btn = QPushButton("+")
-        self.add_btn.setFixedSize(30, 30)
+        self.add_btn = QPushButton()
+        set_icon(self.add_btn, 'plus', 16)
         self.add_btn.setObjectName("add_btn")
+        self.add_btn.setFixedSize(28, 28)
         self.add_btn.clicked.connect(self._on_add)
         layout.addWidget(self.add_btn)
     
@@ -68,31 +71,34 @@ class SubchannelCard(QWidget):
     
     def setup_ui(self, subchannel_name):
         main_layout = QVBoxLayout(self)
-        main_layout.setSpacing(10)
+        main_layout.setSpacing(8)
         main_layout.setContentsMargins(0, 0, 0, 0)
         
         self.card_frame = QFrame()
         self.card_frame.setObjectName("subchannel_card")
         layout = QVBoxLayout(self.card_frame)
-        layout.setSpacing(10)
+        layout.setSpacing(8)
         layout.setContentsMargins(10, 10, 10, 10)
         
         header_layout = QHBoxLayout()
+        header_layout.setSpacing(8)
         
         self.name_field = QLineEdit(subchannel_name)
         self.name_field.setPlaceholderText("Название подканала")
-        self.name_field.setMinimumHeight(35)
+        self.name_field.setMinimumHeight(32)
         header_layout.addWidget(self.name_field, 1)
         
-        self.remove_card_btn = QPushButton("−")
-        self.remove_card_btn.setFixedSize(30, 30)
+        self.remove_card_btn = QPushButton()
+        set_icon(self.remove_card_btn, 'minus', 16)
         self.remove_card_btn.setObjectName("remove_btn")
+        self.remove_card_btn.setFixedSize(28, 28)
         self.remove_card_btn.clicked.connect(self._on_remove_card)
         header_layout.addWidget(self.remove_card_btn)
         
-        self.add_card_btn = QPushButton("+")
-        self.add_card_btn.setFixedSize(30, 30)
+        self.add_card_btn = QPushButton()
+        set_icon(self.add_card_btn, 'plus', 16)
         self.add_card_btn.setObjectName("add_btn")
+        self.add_card_btn.setFixedSize(28, 28)
         self.add_card_btn.clicked.connect(self._on_add_card)
         header_layout.addWidget(self.add_card_btn)
         
@@ -149,22 +155,24 @@ class CreativeRow(QWidget):
         
         layout = QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(10)
+        layout.setSpacing(8)
         
         self.text_field = QLineEdit(value)
         self.text_field.setPlaceholderText("Название креатива")
-        self.text_field.setMinimumHeight(35)
+        self.text_field.setMinimumHeight(32)
         layout.addWidget(self.text_field, 1)
         
-        self.remove_btn = QPushButton("−")
-        self.remove_btn.setFixedSize(30, 30)
+        self.remove_btn = QPushButton()
+        set_icon(self.remove_btn, 'minus', 16)
         self.remove_btn.setObjectName("remove_btn")
+        self.remove_btn.setFixedSize(28, 28)
         self.remove_btn.clicked.connect(self._on_remove)
         layout.addWidget(self.remove_btn)
         
-        self.add_btn = QPushButton("+")
-        self.add_btn.setFixedSize(30, 30)
+        self.add_btn = QPushButton()
+        set_icon(self.add_btn, 'plus', 16)
         self.add_btn.setObjectName("add_btn")
+        self.add_btn.setFixedSize(28, 28)
         self.add_btn.clicked.connect(self._on_add)
         layout.addWidget(self.add_btn)
     
@@ -199,11 +207,34 @@ class PublishBlock(QWidget):
     def setup_ui(self):
         layout = QVBoxLayout(self)
         layout.setSpacing(15)
-        layout.setContentsMargins(20, 20, 20, 20)
+        layout.setContentsMargins(15, 15, 15, 15)
         
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QFrame.NoFrame)
+        # Явные стили для скролла
+        scroll.setStyleSheet("""
+            QScrollArea {
+                border: none;
+                background-color: transparent;
+            }
+            QScrollBar:vertical {
+                background-color: #1a1a2e;
+                width: 8px;
+                border-radius: 4px;
+            }
+            QScrollBar::handle:vertical {
+                background-color: #55c84f;
+                border-radius: 4px;
+                min-height: 40px;
+            }
+            QScrollBar::handle:vertical:hover {
+                background-color: #45b240;
+            }
+            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+                height: 0px;
+            }
+        """)
         
         scroll_content = QWidget()
         scroll_layout = QVBoxLayout(scroll_content)
@@ -213,6 +244,7 @@ class PublishBlock(QWidget):
         project_card = QFrame()
         project_card.setObjectName("card")
         project_layout = QVBoxLayout(project_card)
+        project_layout.setSpacing(8)
         
         project_title = QLabel("Название проекта")
         project_title.setObjectName("card_title")
@@ -220,7 +252,7 @@ class PublishBlock(QWidget):
         
         self.project_name_field = QLineEdit("PROD")
         self.project_name_field.setPlaceholderText("Название проекта")
-        self.project_name_field.setMinimumHeight(40)
+        self.project_name_field.setMinimumHeight(36)
         project_layout.addWidget(self.project_name_field)
         
         scroll_layout.addWidget(project_card)
@@ -229,6 +261,7 @@ class PublishBlock(QWidget):
         subchannels_card = QFrame()
         subchannels_card.setObjectName("card")
         subchannels_layout = QVBoxLayout(subchannels_card)
+        subchannels_layout.setSpacing(8)
         
         subchannels_title = QLabel("Подканалы и площадки")
         subchannels_title.setObjectName("card_title")
@@ -243,7 +276,7 @@ class PublishBlock(QWidget):
         subchannels_layout.addLayout(add_subchannel_layout)
         
         self.subchannels_container = QVBoxLayout()
-        self.subchannels_container.setSpacing(10)
+        self.subchannels_container.setSpacing(8)
         subchannels_layout.addLayout(self.subchannels_container)
         
         scroll_layout.addWidget(subchannels_card)
@@ -252,6 +285,7 @@ class PublishBlock(QWidget):
         creatives_card = QFrame()
         creatives_card.setObjectName("card")
         creatives_layout = QVBoxLayout(creatives_card)
+        creatives_layout.setSpacing(8)
         
         creatives_title = QLabel("Названия креативов")
         creatives_title.setObjectName("card_title")
@@ -271,9 +305,11 @@ class PublishBlock(QWidget):
         
         scroll_layout.addWidget(creatives_card)
         
+        # Кнопка создания
         self.create_btn = QPushButton("СОЗДАТЬ")
         self.create_btn.setObjectName("create_btn")
-        self.create_btn.setMinimumHeight(45)
+        set_icon(self.create_btn, 'plus', 16)
+        self.create_btn.setMinimumHeight(40)
         self.create_btn.clicked.connect(self.create_structure)
         scroll_layout.addWidget(self.create_btn)
         
