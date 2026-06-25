@@ -26,6 +26,10 @@ QuickTools_Setup.exe
 *.bak
 *.backup
 
+# Test / quality tool caches
+.pytest_cache/
+.ruff_cache/
+
 # IDE
 .vscode/
 .idea/

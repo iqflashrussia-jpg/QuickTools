@@ -1,0 +1,34 @@
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+exclude = [
+    ".venv",
+    ".venv_broken_*",
+    "__pycache__",
+    "backup_flet",
+    "backups",
+    "exports",
+    "reports",
+    "_recovery_git",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "F",
+    "I",
+    "UP",
+]
+ignore = [
+    "E501",
+]
+
+[tool.pytest.ini_options]
+python_files = [
+    "test_*.py",
+    "*_test.py",
+]
+testpaths = [
+    ".",
+]
+addopts = "-q"
