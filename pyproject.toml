@@ -7,6 +7,7 @@ exclude = [
     "__pycache__",
     "backup_flet",
     "backups",
+    "examples/dev_preview",
     "exports",
     "reports",
     "_recovery_git",
@@ -29,6 +30,6 @@ python_files = [
     "*_test.py",
 ]
 testpaths = [
-    ".",
+    "tests",
 ]
 addopts = "-q"
