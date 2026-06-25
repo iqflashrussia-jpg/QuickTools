@@ -1,6 +1,7 @@
 import os
 import sys
 
+
 def get_oxipng_path():
     """Возвращает путь к oxipng.exe"""
     exe_dir = os.path.dirname(sys.argv[0])

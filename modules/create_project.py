@@ -4,6 +4,7 @@
 
 import os
 
+
 def create_project_structure(project_path):
     """Создаёт полную структуру папок проекта"""
     

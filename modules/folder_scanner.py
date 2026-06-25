@@ -1,5 +1,6 @@
 import os
 
+
 def find_size_folders(base_path):
     """Находит все папки с 'x' в имени (размеры)"""
     folders = []

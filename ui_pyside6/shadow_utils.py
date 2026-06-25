@@ -4,12 +4,12 @@
 Все параметры теней управляются из styles.py
 """
 
-from PySide6.QtWidgets import QGraphicsDropShadowEffect
 from PySide6.QtGui import QColor
+from PySide6.QtWidgets import QGraphicsDropShadowEffect
 
 # Импортируем настройки теней из styles.py
 try:
-    from ui_pyside6.styles import SHADOWS, COLORS
+    from ui_pyside6.styles import COLORS, SHADOWS
     SHADOWS_AVAILABLE = True
 except ImportError:
     SHADOWS_AVAILABLE = False

@@ -4,17 +4,24 @@
 
 import os
 import sys
+
+from PySide6.QtCore import Qt, QThread, QTimer, Signal
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel,
-    QPushButton, QLineEdit, QGroupBox, QProgressBar,
-    QFrame
+    QFrame,
+    QGroupBox,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QProgressBar,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
 )
-from PySide6.QtCore import Qt, QThread, Signal, QTimer
 
 from ui_pyside6.styles import apply_styles
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
-from modules import settings_finder, image_optimizer
+from modules import image_optimizer, settings_finder
 
 
 class OptimizerThread(QThread):

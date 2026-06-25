@@ -5,16 +5,23 @@
 """
 
 import os
-from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel,
-    QPushButton, QLineEdit, QScrollArea, QFrame,
-    QMessageBox
-)
-from PySide6.QtCore import Qt
 
-from ui_pyside6.styles import apply_styles
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import (
+    QFrame,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QMessageBox,
+    QPushButton,
+    QScrollArea,
+    QVBoxLayout,
+    QWidget,
+)
+
+from ui_pyside6.common_widgets import CreativeRow, PlatformRow
 from ui_pyside6.icons_utils import set_icon
-from ui_pyside6.common_widgets import PlatformRow, CreativeRow
+from ui_pyside6.styles import apply_styles
 
 
 class SubchannelCard(QWidget):

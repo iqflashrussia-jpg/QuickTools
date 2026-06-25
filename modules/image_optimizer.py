@@ -1,8 +1,11 @@
-import subprocess
 import os
-from PIL import Image
+import subprocess
+
 import imagequant
+from PIL import Image
+
 from . import config
+
 
 def check_oxipng():
     """Проверяет, доступен ли oxipng"""

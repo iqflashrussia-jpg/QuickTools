@@ -1,6 +1,7 @@
 import os
-from . import image_optimizer
-from . import archive_handler
+
+from . import archive_handler, image_optimizer
+
 
 def find_best_settings(folder_path, target_kb, log_func):
     """Гибридный подбор: lossless для больших лимитов, lossy для малых"""

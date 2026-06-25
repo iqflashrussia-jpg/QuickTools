@@ -4,7 +4,9 @@
 """
 
 import os
+
 from . import image_optimizer
+
 
 def optimize_images(folder_path, limit_kb):
     """Главная функция оптимизации"""

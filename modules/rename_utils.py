@@ -1,5 +1,6 @@
 import os
 
+
 def batch_rename(folder_path, find_text, replace_text, log_func):
     """Пакетное переименование файлов и папок"""
     renamed_count = 0

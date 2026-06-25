@@ -3,13 +3,19 @@
 """
 
 import os
-import zipfile
 import shutil
+import zipfile
+
+from PySide6.QtCore import Qt, QThread, QTimer, Signal
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel,
-    QPushButton, QFrame, QProgressBar
+    QFrame,
+    QHBoxLayout,
+    QLabel,
+    QProgressBar,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
 )
-from PySide6.QtCore import Qt, QThread, Signal, QTimer
 
 from ui_pyside6.styles import apply_styles
 

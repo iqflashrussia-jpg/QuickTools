@@ -3,12 +3,20 @@
 """
 
 import sys
-from PySide6.QtWidgets import (
-    QApplication, QMainWindow, QWidget, QVBoxLayout,
-    QHBoxLayout, QLabel, QScrollArea, QLineEdit, QGridLayout
-)
-from PySide6.QtCore import Qt, QSize
+
+from PySide6.QtCore import QSize, Qt
 from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import (
+    QApplication,
+    QGridLayout,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QMainWindow,
+    QScrollArea,
+    QVBoxLayout,
+    QWidget,
+)
 
 
 class IconViewer(QMainWindow):

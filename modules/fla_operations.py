@@ -1,5 +1,6 @@
-import os
 import asyncio
+import os
+
 
 def find_fla_files(folder_path, size=None):
     """Находит .fla файлы в папке"""

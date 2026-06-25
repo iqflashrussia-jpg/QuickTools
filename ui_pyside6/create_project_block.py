@@ -4,17 +4,25 @@
 """
 
 import os
-from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel,
-    QPushButton, QLineEdit, QScrollArea, QFrame,
-    QFileDialog, QMessageBox
-)
-from PySide6.QtCore import Qt
 
-from ui_pyside6.styles import apply_styles
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import (
+    QFileDialog,
+    QFrame,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QMessageBox,
+    QPushButton,
+    QScrollArea,
+    QVBoxLayout,
+    QWidget,
+)
+
+from ui_pyside6.common_widgets import CreativeRow, PlatformRow
 from ui_pyside6.icons_utils import set_icon
-from ui_pyside6.common_widgets import PlatformRow, CreativeRow
 from ui_pyside6.shadow_utils import add_card_shadow
+from ui_pyside6.styles import apply_styles
 
 
 class CreateProjectBlock(QWidget):
@@ -58,8 +66,8 @@ class CreateProjectBlock(QWidget):
         scroll_layout.setSpacing(15)
         
         # === ДОБАВЛЯЕМ ТЕНЬ НА КОНТЕНТ ===
-        from PySide6.QtWidgets import QGraphicsDropShadowEffect
         from PySide6.QtGui import QColor
+        from PySide6.QtWidgets import QGraphicsDropShadowEffect
         shadow = QGraphicsDropShadowEffect()
         shadow.setBlurRadius(20)           # Мягкость тени
         shadow.setXOffset(0)                # Смещение по X
@@ -76,8 +84,8 @@ class CreateProjectBlock(QWidget):
         self.cards.append(project_card)
 
         # === ПРИНУДИТЕЛЬНАЯ ТЕНЬ ===
-        from PySide6.QtWidgets import QGraphicsDropShadowEffect
         from PySide6.QtGui import QColor
+        from PySide6.QtWidgets import QGraphicsDropShadowEffect
         test_shadow = QGraphicsDropShadowEffect()
         test_shadow.setBlurRadius(20)
         test_shadow.setXOffset(0)

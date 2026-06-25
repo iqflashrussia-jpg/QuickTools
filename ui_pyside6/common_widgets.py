@@ -9,7 +9,8 @@
 - CreativeRow - строка с полем для креатива и кнопками +/-
 """
 
-from PySide6.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QPushButton
+from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QPushButton, QWidget
+
 from ui_pyside6.icons_utils import set_icon
 
 

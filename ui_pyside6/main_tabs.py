@@ -4,16 +4,27 @@
 """
 
 import os
-from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QTabWidget,
-    QLabel, QPushButton, QFileDialog, QTextEdit,
-    QSlider, QLineEdit, QCheckBox, QGroupBox, QGridLayout,
-    QFrame
-)
-from PySide6.QtCore import Qt
 
-from ui_pyside6.styles import apply_styles, COLORS
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import (
+    QCheckBox,
+    QFileDialog,
+    QFrame,
+    QGridLayout,
+    QGroupBox,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QSlider,
+    QTabWidget,
+    QTextEdit,
+    QVBoxLayout,
+    QWidget,
+)
+
 from ui_pyside6.icons_utils import set_icon, set_tab_icon
+from ui_pyside6.styles import COLORS, apply_styles
 
 
 class MainTabs(QWidget):

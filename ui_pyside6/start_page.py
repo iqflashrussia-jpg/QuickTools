@@ -3,14 +3,20 @@
 """
 
 import os
-from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel,
-    QPushButton, QFrame, QFileDialog
-)
+
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QDragEnterEvent, QDropEvent
+from PySide6.QtWidgets import (
+    QFileDialog,
+    QFrame,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+)
 
-from ui_pyside6.icons_utils import set_icon, get_icon
+from ui_pyside6.icons_utils import get_icon, set_icon
 from ui_pyside6.styles import COLORS, SIZES
 
 

@@ -1,9 +1,10 @@
 import os
-import zipfile
-import os
 import shutil
 import tempfile
+import zipfile
+
 from . import image_optimizer
+
 
 def get_archive_size_lossless(folder_path, jpg_quality, png_level):
     """Тест с lossless сжатием (Oxipng)"""
