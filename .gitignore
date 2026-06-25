@@ -9,6 +9,10 @@ __pycache__/
 venv/
 env/
 
+# Local recovery / broken environments
+.venv_broken_*/
+_recovery_git/
+
 # Build / packaging
 build/
 dist/

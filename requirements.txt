@@ -1,3 +1,4 @@
-flet
+PySide6
 Pillow
 imagequant
+tabler-qicon
