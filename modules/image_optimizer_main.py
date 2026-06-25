@@ -41,7 +41,7 @@ def optimize_images(folder_path, limit_kb):
                 
                 # PNG файлы
                 if ext.endswith('.png'):
-                    print(f"   📦 Сжатие PNG...")  # Отладка
+                    print("   📦 Сжатие PNG...")  # Отладка
                     # Сначала пробуем lossless oxipng
                     success, reduction = image_optimizer.optimize_png_oxipng(img_path)
                     if success:
@@ -64,7 +64,7 @@ def optimize_images(folder_path, limit_kb):
                 
                 # JPEG файлы
                 elif ext.endswith(('.jpg', '.jpeg')):
-                    print(f"   📸 Сжатие JPEG...")  # Отладка
+                    print("   📸 Сжатие JPEG...")  # Отладка
                     for quality in range(85, 50, -5):
                         reduction = image_optimizer.optimize_jpeg(img_path, quality)
                         new_size_kb = os.path.getsize(img_path) / 1024

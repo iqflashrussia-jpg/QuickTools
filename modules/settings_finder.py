@@ -32,16 +32,16 @@ def find_best_settings(folder_path, target_kb, log_func):
     use_lossless = target_kb >= 250 and image_optimizer.check_oxipng()
     
     if use_lossless:
-        log_func(f"  📌 Используем LOSSLESS сжатие (Oxipng) для PNG")
+        log_func("  📌 Используем LOSSLESS сжатие (Oxipng) для PNG")
         for jpg_q in [85, 90]:
             for level in [1, 2, 3, 4]:
                 test_size = archive_handler.get_archive_size_lossless(folder_path, jpg_q, level)
                 log_func(f"  Тест JPEG={jpg_q}, level={level}: архив {test_size//1024}KB")
                 if test_size <= max_allowed:
                     return 'lossless', jpg_q, level, test_size, f"🎯 Lossless: JPEG={jpg_q}, PNG level={level} | Архив {test_size//1024}KB / {target_kb}KB"
-        log_func(f"  ⚠️ Lossless не хватило, пробуем Lossy...")
+        log_func("  ⚠️ Lossless не хватило, пробуем Lossy...")
     
-    log_func(f"  📌 Используем LOSSY сжатие (pngquant) для PNG")
+    log_func("  📌 Используем LOSSY сжатие (pngquant) для PNG")
     
     if target_kb < 200:
         jpg_qualities = [75, 65, 55, 45]

@@ -67,7 +67,7 @@ class MainWindow(QMainWindow):
         last_project_file = os.path.join(os.path.dirname(__file__), "last_project.txt")
         if os.path.exists(last_project_file):
             try:
-                with open(last_project_file, 'r', encoding='utf-8') as f:
+                with open(last_project_file, encoding='utf-8') as f:
                     path = f.read().strip()
                     if path and os.path.exists(path):
                         return path

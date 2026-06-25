@@ -259,7 +259,7 @@ class CreateProjectBlock(QWidget):
             self.log(f"📍 Путь: {project_path}")
             self.log(f"📁 Площадки ({len(platforms)}): {', '.join(platforms)}")
             self.log(f"📁 Креативы ({len(creatives)}): {', '.join(creatives)}")
-            self.log(f"📁 Папка 'publish' создана и оставлена пустой")
+            self.log("📁 Папка 'publish' создана и оставлена пустой")
             
             if self.update_project_callback:
                 self.update_project_callback(project_path)

@@ -28,7 +28,7 @@ def batch_rename(folder_path, find_text, replace_text, log_func):
             try:
                 os.rename(old_path, new_path)
                 renamed_count += 1
-                log_func(f"  ✅ УСПЕШНО!")
+                log_func("  ✅ УСПЕШНО!")
             except Exception as e:
                 log_func(f"  ❌ Ошибка: {str(e)}")
                 errors += 1

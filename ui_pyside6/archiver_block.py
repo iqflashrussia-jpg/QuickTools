@@ -94,7 +94,7 @@ class ArchiverThread(QThread):
     def run(self):
         try:
             self.log(f"\n{'='*60}")
-            self.log(f"📦 АРХИВАЦИЯ ВСЕХ ПАПОК С РАЗМЕРАМИ")
+            self.log("📦 АРХИВАЦИЯ ВСЕХ ПАПОК С РАЗМЕРАМИ")
             self.log(f"📁 Папка: {self.project_path}")
             self.log(f"{'='*60}")
             
@@ -141,14 +141,14 @@ class ArchiverThread(QThread):
                     self.log(f"     Размер: {archive_size // 1024} KB (сжатие {reduction:.0f}%)")
                     archive_count += 1
                 else:
-                    self.log(f"  ⚠️ Нет файлов для архивации (или только .fla)")
+                    self.log("  ⚠️ Нет файлов для архивации (или только .fla)")
                 
                 self.msleep(50)
             
             total_reduction = (1 - total_after/total_before) * 100 if total_before > 0 else 0
             
             self.log(f"\n{'='*60}")
-            self.log(f"✅ АРХИВАЦИЯ ЗАВЕРШЕНА!")
+            self.log("✅ АРХИВАЦИЯ ЗАВЕРШЕНА!")
             self.log(f"✅ Создано архивов: {archive_count} из {total}")
             if archive_count > 0:
                 self.log(f"📊 Общий размер: {total_before//1024} KB → {total_after//1024} KB")
@@ -186,7 +186,7 @@ class DeleteArchivesThread(QThread):
     def run(self):
         try:
             self.log(f"\n{'='*60}")
-            self.log(f"🗑️ УДАЛЕНИЕ ВСЕХ ZIP АРХИВОВ")
+            self.log("🗑️ УДАЛЕНИЕ ВСЕХ ZIP АРХИВОВ")
             self.log(f"📁 Папка: {self.project_path}")
             self.log(f"{'='*60}")
             
@@ -240,7 +240,7 @@ class DeleteArchivesThread(QThread):
                 self.msleep(10)
             
             self.log(f"\n{'='*60}")
-            self.log(f"✅ УДАЛЕНИЕ ЗАВЕРШЕНО!")
+            self.log("✅ УДАЛЕНИЕ ЗАВЕРШЕНО!")
             self.log(f"✅ Удалено ZIP: {deleted_zips}, папок zip: {deleted_folders}")
             self.log(f"{'='*60}\n")
             

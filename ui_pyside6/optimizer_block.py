@@ -79,7 +79,7 @@ class OptimizerThread(QThread):
             self.log(f"🎯 ОПТИМИЗАЦИЯ ПОД РАЗМЕР {self.target_kb} KB")
             self.log(f"📁 Папка: {self.project_path}")
             if image_optimizer.check_oxipng():
-                self.log(f"✅ Oxipng найден (lossless для лимитов ≥250 KB)")
+                self.log("✅ Oxipng найден (lossless для лимитов ≥250 KB)")
             self.log(f"{'='*60}")
             
             size_folders = self.find_size_folders(self.project_path)
@@ -115,7 +115,7 @@ class OptimizerThread(QThread):
                 
                 method, jpg_q, png_param, archive_size, msg = result
                 self.log(f"  {msg}")
-                self.log(f"  🔄 Применяем сжатие...")
+                self.log("  🔄 Применяем сжатие...")
                 
                 files_to_process = []
                 for file in os.listdir(folder_path):
@@ -169,13 +169,13 @@ class OptimizerThread(QThread):
             total_reduction = (1 - total_after/total_before) * 100 if total_before > 0 else 0
             
             self.log(f"\n{'='*60}")
-            self.log(f"✅ ОПТИМИЗАЦИЯ ЗАВЕРШЕНА!")
+            self.log("✅ ОПТИМИЗАЦИЯ ЗАВЕРШЕНА!")
             self.log(f"📁 Обработано папок: {processed}")
             self.log(f"⏭️ Пропущено: {skipped}")
             if total_before > 0:
                 self.log(f"📊 Общий размер: {total_before//1024} KB → {total_after//1024} KB")
                 self.log(f"📊 Общее сжатие: {total_reduction:.0f}%")
-            self.log(f"🎯 Теперь можно запустить архивацию!")
+            self.log("🎯 Теперь можно запустить архивацию!")
             self.log(f"{'='*60}\n")
             
             self.finished_signal.emit({

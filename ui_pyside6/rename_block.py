@@ -85,7 +85,7 @@ class RenameThread(QThread):
     def run(self):
         try:
             self.log(f"\n{'='*50}")
-            self.log(f"📝 ПАКЕТНОЕ ПЕРЕИМЕНОВАНИЕ")
+            self.log("📝 ПАКЕТНОЕ ПЕРЕИМЕНОВАНИЕ")
             self.log(f"📁 Папка: {self.folder_path}")
             self.log(f"🔍 Поиск: '{self.find_text}' → Замена: '{self.replace_text}'")
             self.log(f"🔠 Учитывать регистр: {'Да' if self.case_sensitive else 'Нет'}")
@@ -147,7 +147,7 @@ class RenameThread(QThread):
                 self.msleep(10)
             
             self.log(f"\n{'='*50}")
-            self.log(f"✅ ПЕРЕИМЕНОВАНИЕ ЗАВЕРШЕНО!")
+            self.log("✅ ПЕРЕИМЕНОВАНИЕ ЗАВЕРШЕНО!")
             self.log(f"✅ Успешно: {renamed_count}")
             self.log(f"❌ Ошибок: {errors}")
             self.log(f"{'='*50}\n")

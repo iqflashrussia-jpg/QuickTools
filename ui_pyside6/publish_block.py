@@ -331,7 +331,7 @@ class PublishBlock(QWidget):
                         os.makedirs(creative_path, exist_ok=True)
                         created_count += 1
             
-            self.log(f"\n✅ Структура публикации успешно создана!")
+            self.log("\n✅ Структура публикации успешно создана!")
             self.log(f"📍 Путь: {publish_path}")
             self.log(f"📁 Проект: {project_name}")
             self.log(f"📁 Подканалы ({len(subchannels)}):")
