@@ -1,37 +1,59 @@
-# Компиляция и сборка
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Build / packaging
 build/
 dist/
 *.spec
-__pycache__/
-*.pyc
+*.iss
+QuickTools_Setup.exe
 
-# Временные файлы
+# Logs and temporary files
 *.log
 *.tmp
+*.bak
+*.backup
 
 # IDE
 .vscode/
 .idea/
 *.code-workspace
 
-# Системные файлы
+# OS files
 Thumbs.db
 .DS_Store
 
-# Игнорировать все .exe, кроме oxipng.exe
+# Executables
 *.exe
 !oxipng.exe
 
-# Бэкапы и старые версии
-backup_flet/
-*.bak
-*.backup
+# Local user state
+last_project.txt
 
-# Файлы проекта (документация)
+# Generated project snapshots and reports
 project_structure.txt
-*.md
-!README.md
+exports/
+reports/
+generated/
+cache/
+caches/
+zip/
+*.zip
 
-# Инсталляторы
-*.iss
-QuickTools_Setup.exe
+# Old backups
+backup_flet/
+
+# Documentation is allowed
+!README.md
+!AGENTS.md
+!ARCHITECTURE.md
+!CONTRIBUTING.md
+!docs/**/*.md
