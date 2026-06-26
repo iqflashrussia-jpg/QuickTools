@@ -83,6 +83,12 @@ For domain-specific tasks, also read:
 - Folder scanning, banner sizes, platform/subchannel/campaign naming, path parsing:
   - `docs/rules/folder-scanning-and-sizes.md`
 
+- Excel parser, Excel import, Excel review, `.xlsx` parsing, sheet/header detection, row filtering, hidden rows, merged cells, HTML5 row detection:
+  - `docs/rules/excel-parser.md`
+
+- Aliases, normalization, canonical values, platform aliases, size aliases, adaptive size aliases, format aliases, matched/unmatched diagnostics:
+  - `docs/rules/aliases-normalization.md`
+
 - FLA discovery/opening, `os.startfile`, open by size, open all:
   - `docs/rules/fla-operations.md`
 
