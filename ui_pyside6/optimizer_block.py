@@ -280,7 +280,7 @@ class OptimizerBlock(QWidget):
             if target_kb < 50:
                 target_kb = 50
                 self.target_size.setText("50")
-        except:
+        except Exception:
             target_kb = 300
             self.target_size.setText("300")
         

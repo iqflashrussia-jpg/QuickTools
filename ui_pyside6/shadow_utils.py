@@ -50,7 +50,7 @@ def add_shadow(widget, blur=15, offset_x=0, offset_y=4, opacity=80):
         g = int(rgb_parts[1].strip())
         b = int(rgb_parts[2].strip())
         shadow.setColor(QColor(r, g, b, opacity))
-    except:
+    except Exception:
         shadow.setColor(QColor(0, 0, 0, opacity))
     
     widget.setGraphicsEffect(shadow)
