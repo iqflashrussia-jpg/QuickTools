@@ -25,7 +25,7 @@ def optimize_png_oxipng(img_path, level=2):
         new_size = os.path.getsize(img_path)
         reduction = (1 - new_size/orig_size) * 100
         return True, reduction
-    except:
+    except Exception:
         return False, 0
 
 def optimize_png_lossy(img_path, colors):
@@ -42,7 +42,7 @@ def optimize_png_lossy(img_path, colors):
         new_size = os.path.getsize(img_path)
         reduction = (1 - new_size/orig_size) * 100
         return True, reduction
-    except:
+    except Exception:
         return False, 0
 
 def optimize_jpeg(img_path, quality):
@@ -55,5 +55,5 @@ def optimize_jpeg(img_path, quality):
             img.save(img_path, 'JPEG', quality=quality, optimize=True, progressive=True)
         new_size = os.path.getsize(img_path)
         return (1 - new_size/orig_size) * 100
-    except:
+    except Exception:
         return 0
