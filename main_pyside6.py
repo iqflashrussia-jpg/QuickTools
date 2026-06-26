@@ -28,7 +28,7 @@ class MainWindow(QMainWindow):
                 app_icon = getattr(icon, 'tool', None)
                 if app_icon:
                     self.setWindowIcon(app_icon)
-            except:
+            except Exception:
                 pass
         
         # Показываем стартовую страницу
@@ -58,7 +58,7 @@ class MainWindow(QMainWindow):
         try:
             with open(last_project_file, 'w', encoding='utf-8') as f:
                 f.write(path)
-        except:
+        except Exception:
             pass
     
     def load_last_project(self):
@@ -70,7 +70,7 @@ class MainWindow(QMainWindow):
                     path = f.read().strip()
                     if path and os.path.exists(path):
                         return path
-            except:
+            except Exception:
                 pass
         return None
     
