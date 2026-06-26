@@ -22,6 +22,7 @@ from ui_pyside6.styles import apply_styles
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from modules import image_optimizer, settings_finder
+from modules.folder_scanner import find_animate_size_folders
 
 
 class OptimizerThread(QThread):
@@ -52,23 +53,13 @@ class OptimizerThread(QThread):
             return folders
         
         self.log(f"🔍 Рекурсивное сканирование: {animate_path}")
-        
-        for root, dirs, files in os.walk(animate_path):
-            for dir_name in dirs:
-                if 'x' in dir_name.lower():
-                    folder_path = os.path.join(root, dir_name)
-                    rel_path = os.path.relpath(root, animate_path)
-                    parts = rel_path.split(os.sep) if rel_path != '.' else []
-                    platform = parts[0] if len(parts) > 0 else "unknown"
-                    campaign = parts[1] if len(parts) > 1 else "unknown"
-                    
-                    folders.append({
-                        'path': folder_path,
-                        'platform': platform,
-                        'campaign': campaign,
-                        'size': dir_name
-                    })
-                    self.log(f"   ✅ Найдена папка: {platform}/{campaign}/{dir_name}")
+
+        folders = find_animate_size_folders(base_path)
+        for folder in folders:
+            self.log(
+                f"   ✅ Найдена папка: "
+                f"{folder['platform']}/{folder['campaign']}/{folder['size']}"
+            )
         
         self.log(f"📁 Всего найдено папок с 'x': {len(folders)}")
         return folders
