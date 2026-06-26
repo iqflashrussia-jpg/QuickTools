@@ -6,7 +6,6 @@ QuickTools - Главный файл запуска
 import os
 import sys
 
-from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication, QMainWindow
 
 from ui_pyside6.icons_utils import TABLER_AVAILABLE

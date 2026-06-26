@@ -5,7 +5,7 @@
 import os
 import sys
 
-from PySide6.QtCore import Qt, QThread, QTimer, Signal
+from PySide6.QtCore import QThread, QTimer, Signal
 from PySide6.QtWidgets import (
     QFrame,
     QGroupBox,

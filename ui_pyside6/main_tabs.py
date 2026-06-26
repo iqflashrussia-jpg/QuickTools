@@ -3,20 +3,12 @@
 Главный экран с вкладками инструментов
 """
 
-import os
 
-from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
-    QCheckBox,
-    QFileDialog,
     QFrame,
-    QGridLayout,
-    QGroupBox,
     QHBoxLayout,
     QLabel,
-    QLineEdit,
     QPushButton,
-    QSlider,
     QTabWidget,
     QTextEdit,
     QVBoxLayout,

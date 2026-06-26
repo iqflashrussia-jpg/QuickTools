@@ -6,7 +6,7 @@ import os
 import shutil
 import zipfile
 
-from PySide6.QtCore import Qt, QThread, QTimer, Signal
+from PySide6.QtCore import QThread, QTimer, Signal
 from PySide6.QtWidgets import (
     QFrame,
     QHBoxLayout,
