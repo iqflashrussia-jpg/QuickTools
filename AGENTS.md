@@ -62,6 +62,39 @@ Important areas:
 - PySide6 UI layout and styling;
 - local project path persistence.
 
+## Rule routing
+
+Before changing code, identify the task domain and read the relevant rule files.
+
+Always read:
+- `docs/rules/project-hygiene.md` for local/generated files and repository hygiene.
+- `docs/rules/git-workflow.md` for branch, commit, and push safety.
+- `docs/rules/codex-safe-commit.md` before staging or committing changes.
+- `docs/rules/regression-checks.md` before deciding which checks to run.
+
+For domain-specific tasks, also read:
+
+- Image optimizer / target KB / image compression:
+  - `docs/rules/image-optimizer.md`
+
+- Publish, archive, ZIP creation, generated archives, `.fla` ZIP exclusions:
+  - `docs/rules/publish-and-archive.md`
+
+- Folder scanning, banner sizes, platform/subchannel/campaign naming, path parsing:
+  - `docs/rules/folder-scanning-and-sizes.md`
+
+- FLA discovery/opening, `os.startfile`, open by size, open all:
+  - `docs/rules/fla-operations.md`
+
+- PySide6 visual/UI tasks:
+  - `docs/rules/ui-pyside6.md`
+
+- PySide6 threading, workers, signals, progress/logs, button states:
+  - `docs/rules/ui-pyside6.md`
+  - `docs/rules/pyside6-threading-and-ui.md`
+
+When a task touches multiple domains, read every matching rule file and keep changes separated into small scoped commits.
+
 ## Dependency rules
 
 - Keep `requirements.txt` synchronized with actual imports.
