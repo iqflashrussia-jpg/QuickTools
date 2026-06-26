@@ -97,7 +97,7 @@ def delete_all_archives(root_path, log_func):
             os.remove(file_path)
             deleted_zips += 1
             log_func(f"  ✅ Удалён: {os.path.basename(file_path)}")
-        except Exception as e:
+        except Exception:
             log_func(f"  ❌ Ошибка: {os.path.basename(file_path)}")
     
     for folder_path in all_zip_folders:
@@ -105,7 +105,7 @@ def delete_all_archives(root_path, log_func):
             shutil.rmtree(folder_path)
             deleted_folders += 1
             log_func(f"  ✅ Удалена папка: {os.path.basename(folder_path)}")
-        except Exception as e:
+        except Exception:
             log_func(f"  ❌ Ошибка: {os.path.basename(folder_path)}")
     
     return deleted_zips, deleted_folders

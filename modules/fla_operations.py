@@ -21,5 +21,5 @@ def open_fla_files(file_paths, log_func):
         try:
             os.startfile(file_path)
             log_func(f"  ✅ Открыт: {os.path.basename(file_path)}")
-        except Exception as e:
+        except Exception:
             log_func(f"  ❌ Ошибка: {os.path.basename(file_path)}")

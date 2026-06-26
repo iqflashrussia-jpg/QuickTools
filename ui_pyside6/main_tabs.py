@@ -39,7 +39,6 @@ class MainTabs(QWidget):
     def set_tab_icons(self):
         """Устанавливает иконки на все вкладки с цветом из дизайн-системы"""
         icon_color = COLORS.get("icon_tab_default", "#787E89")
-        icon_color_selected = COLORS.get("icon_tab_selected", "#071107")
         
         # Устанавливаем иконки на вкладки
         set_tab_icon(self.tabs, 0, 'briefcase', 16, color=icon_color)
